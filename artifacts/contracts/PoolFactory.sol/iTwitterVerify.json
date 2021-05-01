@@ -1,0 +1,47 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "iTwitterVerify",
+  "sourceName": "contracts/PoolFactory.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_user",
+          "type": "address"
+        }
+      ],
+      "name": "getVerification",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "bytes32",
+              "name": "requestId",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "bool",
+              "name": "verified",
+              "type": "bool"
+            },
+            {
+              "internalType": "string",
+              "name": "twitterHandle",
+              "type": "string"
+            }
+          ],
+          "internalType": "struct userVerification",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}
