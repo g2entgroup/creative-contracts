@@ -9,14 +9,14 @@ contract Collection is ERC721, Ownable {
     using Counters for Counters.Counter;
 
     Counters.Counter private _tokenIdTracker;
-
+    string baseURI;
     constructor(
         string memory _name,
         string memory _symbol,
         string memory _baseUri,
         address owner
     ) public Ownable() ERC721(_name, _symbol) {
-        //_setBaseURI(_baseUri);
+        _setBaseURI(_baseUri);
         transferOwnership(owner);
     }
 
@@ -33,11 +33,11 @@ contract Collection is ERC721, Ownable {
     function changeBaseURI(string memory baseURI_) external onlyOwner {
         _changeBaseURI(baseURI_);
     }
-
+    /*
     function changetokenURI(uint256 tokenId, string memory tokenURI) external onlytokenOwner(tokenId) {
         _changetokenURI(tokenId, tokenURI);
     }
-
+    */
 
     /** ===================== internal mutative function ===================== */
 
@@ -54,16 +54,24 @@ contract Collection is ERC721, Ownable {
         _safeMint(to, _tokenIdTracker.current());
         _tokenIdTracker.increment();
     }
+
+    function _baseURI() internal view override returns (string memory) {
+        return baseURI;
+    }
+
+    function _setBaseURI(string memory _baseURI) internal {
+        baseURI = _baseURI;
+    }
     
     function _changeBaseURI(string memory baseURI_) internal {
         _setBaseURI(baseURI_);
     }
-    
+    /*
     function _changetokenURI(uint256 tokenId, string memory tokenURI) internal {
         _setTokenURI(tokenId, tokenURI);
         emit changedtokenURI(msg.sender, tokenId, tokenURI);
     }
-    
+    */
     /** ===================== modifier ===================== */
     modifier onlytokenOwner(uint tokenId) {
         require(ownerOf(tokenId) == msg.sender, "Only the owner can modify the tokenURI");
