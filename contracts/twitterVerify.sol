@@ -32,12 +32,22 @@ contract twitterverify is ChainlinkClient, Ownable {
         oracle = 0x0e70fe151Fa8A1477D4E2a42028DB8a231D2C827; // oracle address
         verifyUserJobId = "9ddae3a5bd6547d590eb5ccaeab1429e"; //job id
         fee = 1 * 10 ** 17; // 0.1 LINK
+
     }
     
     function setJobId( bytes32 _jobId ) external onlyOwner {
         verifyUserJobId = _jobId;
     }
-    
+
+    function createTestUser( address _address ) external onlyOwner {
+        userVerification memory testUser = userVerification({
+            requestId: 0,
+            verified: true,
+            twitterHandle: "***TEST_USER***"
+        });
+        verificationMap[_address] = testUser;
+    }
+
     function verifyUser(string memory _userHandle) public returns(bytes32) {
         require(link.transferFrom(msg.sender, address(this), fee), 'transferFrom failed');
         verificationMap[msg.sender].verified = false;
@@ -59,6 +69,13 @@ contract twitterverify is ChainlinkClient, Ownable {
             verificationMap[user].verified = true;
             emit verificationSuccess(_requestId, verificationMap[user].twitterHandle);
         }
+    }
+    function getVerification(address _address) external returns(bool){
+        return verificationMap[_address].verified;
+    }
+
+    function getTwitterHandle(address _address) external returns(string memory){
+        return verificationMap[_address].twitterHandle;
     }
 }
 

@@ -45,5 +45,8 @@ module.exports = {
       url: `https://rpc.xdaichain.com/`,
       accounts: {mnemonic: mnemonic}
     }
+  },
+  mocha: {
+    timeout: 200000
   }
 };

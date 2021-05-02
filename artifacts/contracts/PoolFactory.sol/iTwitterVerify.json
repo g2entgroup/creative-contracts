@@ -7,6 +7,25 @@
       "inputs": [
         {
           "internalType": "address",
+          "name": "_address",
+          "type": "address"
+        }
+      ],
+      "name": "getTwitterHandle",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
           "name": "_user",
           "type": "address"
         }
@@ -14,26 +33,9 @@
       "name": "getVerification",
       "outputs": [
         {
-          "components": [
-            {
-              "internalType": "bytes32",
-              "name": "requestId",
-              "type": "bytes32"
-            },
-            {
-              "internalType": "bool",
-              "name": "verified",
-              "type": "bool"
-            },
-            {
-              "internalType": "string",
-              "name": "twitterHandle",
-              "type": "string"
-            }
-          ],
-          "internalType": "struct userVerification",
+          "internalType": "bool",
           "name": "",
-          "type": "tuple"
+          "type": "bool"
         }
       ],
       "stateMutability": "nonpayable",

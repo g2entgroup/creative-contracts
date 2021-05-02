@@ -32,6 +32,7 @@ contract Pool {
     uint searchIndex; //stores the last index that was cheked for top ten calcualtion
     bool checkedForTies;
     uint finalistsCount;
+    bool public backedByFunds;
     
     struct User{
         address user;
@@ -57,13 +58,17 @@ contract Pool {
         require(msg.sender != poolOwner, "Only Fans can call this function!");
         _;
     }
+
+    modifier checkFunds() {
+        require(backedByFunds, "Pool is not backed by funds!");
+        _;
+    }
     
     
     constructor(string memory _poolName, string memory _brandName, uint _capital, address _capitalAddress, address _nftAddress, address _poolOwner, address _rng, uint _campaignLength, uint _votingLength, uint _decisionLength, uint _submissionLength) {
         poolOwner = _poolOwner;
         funds = _capital;
         token = IERC20(_capitalAddress);
-        require(token.transferFrom(poolOwner, address(this), funds), "trandferFrom failed, pool not backed by funds!");
         
         userDeposit = funds / 10;
         nft = IERC721(_nftAddress);
@@ -77,12 +82,21 @@ contract Pool {
         brandVotingEndBlock = fanVotingEndBlock + _decisionLength; 
         campaignEndBlock = currentBlock + _campaignLength;
     }
+
+    function getName() external view returns(string memory){
+        return poolName;
+    }
+
+    function backPool() external onlyPoolOwner {
+        require(!backedByFunds, "Pool already backed by funds!");
+        require(token.transferFrom(msg.sender, address(this), funds), "trandferFrom failed, pool not backed by funds!");
+    }
     
     function changeName(string memory _name) external onlyPoolOwner {
         poolName = _name;
     }
     
-    function createSubmission( uint[3] memory nfts) external {
+    function createSubmission( uint[3] memory nfts) external checkFunds {
         require(block.number < submissionEndBlock, "Can not add submissions during the fan voting period");
         require(token.transferFrom(msg.sender, address(this), userDeposit), "trandferFrom failed, submission not backed by funds!");
         for(uint i=0; i < 3; i++){
@@ -100,7 +114,7 @@ contract Pool {
         submissionCount++;
     }
     
-    function fanVote(uint _submissionNumber) external onlyFans {
+    function fanVote(uint _submissionNumber) external onlyFans checkFunds {
         //TODO I think its okay to read the zero address of an empty array, I am assuming it returns zero but I need to verify this!
         require( msg.sender != submissions[_submissionNumber].users[0].user, "Artist can not vote for their own submission!");
         require(block.number >= submissionEndBlock, "Can not start voting until submission period is over!");

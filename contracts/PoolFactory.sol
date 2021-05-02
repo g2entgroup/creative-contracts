@@ -17,14 +17,20 @@ contract PoolFactory is Ownable{
     address[] poolList;
     address TWITTER_VERIFY_ADDRESS;
     iTwitterVerify twitterVerify;
+    iRNG rng;
+    linkToken link;
+    address LINK_CONTRACT_ADDRESS;
     modifier okayToCreatePool(){
         require(allowPoolCreation, "Pool creation is currently not allowed!");
         _;
     }
     
-    constructor(address _twitterVerifyAddress){
+    constructor(address _twitterVerifyAddress, address linkTokenAddress, address rngAddress){
         TWITTER_VERIFY_ADDRESS = _twitterVerifyAddress;
         twitterVerify = iTwitterVerify(TWITTER_VERIFY_ADDRESS);
+        rng = iRNG(rngAddress);
+        LINK_CONTRACT_ADDRESS = linkTokenAddress;
+        link = linkToken(LINK_CONTRACT_ADDRESS);
     }
     
     
@@ -35,26 +41,40 @@ contract PoolFactory is Ownable{
     function changePoolCreationBool( bool _bool) external onlyOwner{
         allowPoolCreation = _bool;
     }
+
+    function getPoolAddress( uint _index) external view returns(address) {
+        return poolList[_index];
+    }
     
     function createPool(
     string memory _poolName, 
     uint _capital, 
     address _capitalAddress, 
     address _nftAddress, 
-    address _rng, 
     uint _campaignLength, 
     uint _votingLength, 
     uint _decisionLength, 
     uint _submissionLength)
-    external {
-        userVerification memory userData = twitterVerify.getVerification(msg.sender);
-        require(userData.verified, "Caller address is not verified with Twitter!");
-        Pool pool = new Pool(_poolName, userData.twitterHandle, _capital, _capitalAddress, _nftAddress, msg.sender, _rng, _campaignLength, _votingLength, _decisionLength, _submissionLength);
+    external{
+        require(allowPoolCreation, "Pool creation is currently not allowed!");
+        require(twitterVerify.getVerification(msg.sender), "Caller address is not verified with Twitter!");
+        require(link.transferFrom(msg.sender, address(rng), 1*(10**17)), "Link transferFrom failed!");
+        Pool pool = new Pool(_poolName, twitterVerify.getTwitterHandle(msg.sender), _capital, _capitalAddress, _nftAddress, msg.sender, address(rng), _campaignLength, _votingLength, _decisionLength, _submissionLength);
         poolList.push(address(pool));
+        rng.addToWhitelist(address(pool));
     }
 }
 
 interface iTwitterVerify{
 
-    function getVerification(address _user) external returns(userVerification memory); //TODO why does this need memory?
+    function getVerification(address _user) external returns(bool); //TODO why does this need memory?
+    function getTwitterHandle(address _address) external returns(string memory);
+}
+
+interface linkToken{
+        function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
+}
+
+interface iRNG {
+    function addToWhitelist(address _address) external;
 }
