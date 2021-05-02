@@ -90,10 +90,15 @@ contract Pool {
     function backPool() external onlyPoolOwner {
         require(!backedByFunds, "Pool already backed by funds!");
         require(token.transferFrom(msg.sender, address(this), funds), "trandferFrom failed, pool not backed by funds!");
+        backedByFunds = true;
     }
     
     function changeName(string memory _name) external onlyPoolOwner {
         poolName = _name;
+    }
+
+    function seePoolBacking() external view returns(uint){
+        return token.balanceOf(address(this));
     }
     
     function createSubmission( uint[3] memory nfts) external checkFunds {
