@@ -1,5 +1,5 @@
 const { expect } = require("chai");
-const { ethers } = require("hardhat");
+const { ethers, network } = require("hardhat");
 const { isCallTrace } = require("hardhat/internal/hardhat-network/stack-traces/message-trace");
 
 let MockERC20;
@@ -15,7 +15,7 @@ let poolfactory;
 let poolAddress;
 let Pool;
 let pool;
-
+let Provider;
 //Test wallet addresses
 let owner;
 let addr1; // Test user 1
@@ -145,9 +145,9 @@ describe("Pool Artist Functionality Tests", function() {
         
         // Did not approve token transfer
         let nfts = ["1", "2", "3"];
-        await mockERC721.connect(addr1).approve(pool.address, "1"); //Approve the pool to transfer nft w/ tokenId 1
-        await mockERC721.connect(addr1).approve(pool.address, "2"); //Approve the pool to transfer nft w/ tokenId 2
-        await mockERC721.connect(addr1).approve(pool.address, "3"); //Approve the pool to transfer nft w/ tokenId 3
+        await mockERC721.connect(addr1).approve(pool.address, "1");
+        await mockERC721.connect(addr1).approve(pool.address, "2");
+        await mockERC721.connect(addr1).approve(pool.address, "3");
         await expect(pool.connect(addr1).createSubmission(nfts)).to.be.reverted;
     });
 
@@ -164,13 +164,67 @@ describe("Pool Artist Functionality Tests", function() {
     it("createSubmission() should fail if pool owner has not backed the pool with funds", async function() {
         await mockERC20.connect(addr1).approve(pool.address, "100000000000000000000");
         let nfts = ["1", "2", "3"];
-        await mockERC721.connect(addr1).approve(pool.address, "1"); //Approve the pool to transfer nft w/ tokenId 1
-        await mockERC721.connect(addr1).approve(pool.address, "2"); //Approve the pool to transfer nft w/ tokenId 2
-        await mockERC721.connect(addr1).approve(pool.address, "3"); //Approve the pool to transfer nft w/ tokenId 3
+        await mockERC721.connect(addr1).approve(pool.address, "1");
+        await mockERC721.connect(addr1).approve(pool.address, "2");
+        await mockERC721.connect(addr1).approve(pool.address, "3");
         await expect(pool.connect(addr1).createSubmission(nfts)).to.be.reverted;
     });
 
+    it("createSubmission() should fail if passed the submission end time", async function() {
+        await mockERC20.connect(brand).approve(pool.address, "1000000000000000000000");
+        await pool.connect(brand).backPool();
 
+        //Advance time to make it the fan voiting period
+        await network.provider.send("evm_increaseTime", [150]);
+        await network.provider.send("evm_mine");        
+
+        await mockERC20.connect(addr1).approve(pool.address, "100000000000000000000");
+        let nfts = ["1", "2", "3"];
+        await mockERC721.connect(addr1).approve(pool.address, "1");
+        await mockERC721.connect(addr1).approve(pool.address, "2");
+        await mockERC721.connect(addr1).approve(pool.address, "3");
+        await expect(pool.connect(addr1).createSubmission(nfts)).to.be.reverted;
+    });
 });
 
+describe("Pool Fan Functionality Tests", function() {
+
+    it("Fans should be able to vote on submissions if they have the funds available", async function() {
+        await mockERC20.connect(brand).approve(pool.address, "1000000000000000000000");
+        await pool.connect(brand).backPool();
+        
+        await mockERC20.connect(addr1).approve(pool.address, "100000000000000000000");
+        let nfts = ["1", "2", "3"];
+        await mockERC721.connect(addr1).approve(pool.address, "1");
+        await mockERC721.connect(addr1).approve(pool.address, "2");
+        await mockERC721.connect(addr1).approve(pool.address, "3");
+        await pool.connect(addr1).createSubmission(nfts);
+
+        //Advance time to make it the fan voiting period
+        await network.provider.send("evm_increaseTime", [150]);
+        await network.provider.send("evm_mine");
+
+        await mockERC20.connect(addr2).approve(pool.address, "100000000000000000000");
+        await pool.connect(addr2).fanVote("0");
+    });
+
+    it("Artitsts should not be able to vote on their own submissions", async function() {
+        await mockERC20.connect(brand).approve(pool.address, "1000000000000000000000");
+        await pool.connect(brand).backPool();
+        
+        await mockERC20.connect(addr1).approve(pool.address, "100000000000000000000");
+        let nfts = ["1", "2", "3"];
+        await mockERC721.connect(addr1).approve(pool.address, "1");
+        await mockERC721.connect(addr1).approve(pool.address, "2");
+        await mockERC721.connect(addr1).approve(pool.address, "3");
+        await pool.connect(addr1).createSubmission(nfts);
+
+        //Advance time to make it the fan voiting period
+        await network.provider.send("evm_increaseTime", [150]);
+        await network.provider.send("evm_mine");
+        
+        await mockERC20.connect(addr1).approve(pool.address, "100000000000000000000");
+        await expect(pool.connect(addr1).fanVote("0")).to.be.reverted;
+    });
+});
 

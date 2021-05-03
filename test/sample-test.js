@@ -9,6 +9,14 @@ const { isCallTrace } = require("hardhat/internal/hardhat-network/stack-traces/m
  * Also I can add 'before', 'beforeEach', 'after', 'afterEach'
  * Can also interact with existing contract deployments
  * First line with getContractFactory is the same, but on the second line replace Storage.deploy() with Storage.attach("ADDRESS OF EXISTING CONTRACT")
+ * console.log(await ethers.provider.getBlockNumber()); <---- How to get the current block number
+ * await network.provider.send("evm_increaseTime", [150]); //Move the next blocks timestamp forward by 150
+ * await network.provider.send("evm_mine"); 
+ * ^^^^^How to advance block time
+ * 
+ * await network.provider.send("evm_setNextBlockTimestamp", [1625097600])
+ * await network.provider.send("evm_mine")
+ * ^^^^^ How to set the timestamp of the next block
  */
 
  //Declare variables to be assigned in the beforeEach callback

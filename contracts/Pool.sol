@@ -17,10 +17,10 @@ contract Pool {
     string public poolName; //Brand can call the pool whatever they want IE "Campaing to design the next Coca Cola Bear"
     string public brandName; //Pulled from Twitter handle is not changeable
     uint public funds; //Capital Pool owner deposits to start pool!
-    uint public submissionEndBlock;
-    uint public fanVotingEndBlock;
-    uint public brandVotingEndBlock;
-    uint public campaignEndBlock;
+    uint public submissionEndTime;
+    uint public fanVotingEndTime;
+    uint public brandVotingEndTime;
+    uint public campaignEndTime;
     bool public topTenFound;
     uint[10] public topTen;
     uint[10] public topTenAmount;
@@ -76,11 +76,11 @@ contract Pool {
         
         poolName = _poolName;
         brandName = _brandName;
-        uint currentBlock = block.number;
-        submissionEndBlock = currentBlock + _submissionLength;
-        fanVotingEndBlock = submissionEndBlock + _votingLength;
-        brandVotingEndBlock = fanVotingEndBlock + _decisionLength; 
-        campaignEndBlock = currentBlock + _campaignLength;
+        uint currentTime = block.timestamp;
+        submissionEndTime = currentTime + _submissionLength;
+        fanVotingEndTime = submissionEndTime + _votingLength;
+        brandVotingEndTime = fanVotingEndTime + _decisionLength; 
+        campaignEndTime = currentTime + _campaignLength;
     }
 
     function getName() external view returns(string memory){
@@ -102,7 +102,7 @@ contract Pool {
     }
     
     function createSubmission( uint[3] memory nfts) external checkFunds {
-        require(block.number < submissionEndBlock, "Can not add submissions during the fan voting period");
+        require(block.timestamp < submissionEndTime, "Can not add submissions during the fan voting period");
         require(token.transferFrom(msg.sender, address(this), userDeposit), "trandferFrom failed, submission not backed by funds!");
         for(uint i=0; i < 3; i++){
             nft.transferFrom(msg.sender, address(this), nfts[i]);//Transfer them to the contract Think we need to do a require, we could require the nft owner is the conrtact?
@@ -122,8 +122,8 @@ contract Pool {
     function fanVote(uint _submissionNumber) external onlyFans checkFunds {
         //TODO I think its okay to read the zero address of an empty array, I am assuming it returns zero but I need to verify this!
         require( msg.sender != submissions[_submissionNumber].users[0].user, "Artist can not vote for their own submission!");
-        require(block.number >= submissionEndBlock, "Can not start voting until submission period is over!");
-        require(block.number <= brandVotingEndBlock, "Fan Voting Period is Over!");
+        require(block.timestamp >= submissionEndTime, "Can not start voting until submission period is over!");
+        require(block.timestamp <= brandVotingEndTime, "Fan Voting Period is Over!");
         require(submissions[_submissionNumber].nftList[0] > 0, "There are no NFTs in this submission!");
         require(token.transferFrom(msg.sender, address(this), userDeposit), "trandferFrom failed, vote not backed by funds!");
         
@@ -147,7 +147,8 @@ contract Pool {
     //TODO could add a check that if submissionCount is <= 10, just make the finalists == to the submissions
     function getTopTen() external onlyPoolOwner{
         require(searchIndex < submissionCount, "Already found top ten from all submissions!");
-        require(block.number > fanVotingEndBlock, "Cannot select top ten until fan voting is over!");
+        require(block.timestamp > fanVotingEndTime, "Cannot select top ten until fan voting is over!");
+        require(block.timestamp < campaignEndTime, "Decision period is over!");
         uint smallStake; //The submission with the smallest amount in the top ten. This is that small amount
         uint indexSmall; //The index of the submission with the smallest amount in the top ten
         uint submissionSum; // Used to add up the total vote count for a submission
@@ -183,7 +184,7 @@ contract Pool {
             }
         }
         searchIndex = searchIndex + 1;
-        rng.getRandomNumber(block.number);
+        rng.getRandomNumber(block.timestamp);
         topTenFound = true;
         
     }
@@ -218,7 +219,7 @@ contract Pool {
     
     function selectWinner(uint submissionIndex) external onlyPoolOwner{
         require(!winnerSelected, "Already selected winner!");
-        require(block.number > campaignEndBlock, "Can only choose a winner after the campaign is over!");
+        require(block.timestamp > campaignEndTime, "Can only choose a winner after the campaign is over!");
         require(checkedForTies, "You have to call checForTies first!");
         winnerSelected = true;
         bool winnerInTopTen;
@@ -240,7 +241,7 @@ contract Pool {
     }
     
     function cashout(uint _submissionNumber) external {
-        require(block.number > campaignEndBlock, "Can not cashout until campaign is over!");
+        require(block.timestamp > campaignEndTime, "Can not cashout until campaign is over!");
         bool userFound;
         uint index;
         for (uint i=0; i<submissions[_submissionNumber].userCount; i++){
