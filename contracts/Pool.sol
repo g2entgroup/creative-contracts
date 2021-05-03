@@ -46,7 +46,7 @@ contract Pool {
         uint userCount;
     }
     
-    mapping(uint => submission) submissions;
+    mapping(uint => submission) public submissions;
     uint submissionCount = 0;
     
     modifier onlyPoolOwner(){

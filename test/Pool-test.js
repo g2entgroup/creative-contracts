@@ -128,6 +128,15 @@ describe("Pool Artist Functionality Tests", function() {
         await mockERC721.connect(addr1).approve(pool.address, "2"); //Approve the pool to transfer nft w/ tokenId 2
         await mockERC721.connect(addr1).approve(pool.address, "3"); //Approve the pool to transfer nft w/ tokenId 3
         await pool.connect(addr1).createSubmission(nfts);
+
+        //Make sure tokens, and NFTs transferred to pool
+        expect(await mockERC20.connect(addr1).balanceOf(pool.address)).to.equal("1100000000000000000000")
+        expect(await mockERC721.connect(addr1).ownerOf("1")).to.equal(pool.address);
+        expect(await mockERC721.connect(addr1).ownerOf("2")).to.equal(pool.address);
+        expect(await mockERC721.connect(addr1).ownerOf("3")).to.equal(pool.address);
+
+        //TODO: Confirm the entry was created properly
+        //expect(await pool.connect(addr2).submissions[0].nftList).to.equal(nfts);
     });
 
     it("createSubmission() should fail if ERC20 transferFrom fails", async function() {
@@ -149,6 +158,15 @@ describe("Pool Artist Functionality Tests", function() {
         //Did not approve nft transfer
         await mockERC20.connect(addr1).approve(pool.address, "100000000000000000000");
         let nfts = ["1", "2", "3"];
+        await expect(pool.connect(addr1).createSubmission(nfts)).to.be.reverted;
+    });
+
+    it("createSubmission() should fail if pool owner has not backed the pool with funds", async function() {
+        await mockERC20.connect(addr1).approve(pool.address, "100000000000000000000");
+        let nfts = ["1", "2", "3"];
+        await mockERC721.connect(addr1).approve(pool.address, "1"); //Approve the pool to transfer nft w/ tokenId 1
+        await mockERC721.connect(addr1).approve(pool.address, "2"); //Approve the pool to transfer nft w/ tokenId 2
+        await mockERC721.connect(addr1).approve(pool.address, "3"); //Approve the pool to transfer nft w/ tokenId 3
         await expect(pool.connect(addr1).createSubmission(nfts)).to.be.reverted;
     });
 
