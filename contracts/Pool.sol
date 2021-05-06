@@ -154,39 +154,50 @@ contract Pool {
         uint submissionSum; // Used to add up the total vote count for a submission
         bool spotFound; //Bool used to determine if the smallest top ten submission needs to be compared to the current submission vote sum
         
-        while (gasleft() > 100 && searchIndex < submissionCount){
-
-            submissionSum = (submissions[searchIndex].userCount - 1) * userDeposit;
-            spotFound = false;
-        
-            smallStake = topTenAmount[0];
-            indexSmall = 0;
-            for ( uint k=0; k < 10; k++){
-                if (topTenAmount[k] == 0){
-                    topTenAmount[k] = submissionSum;
-                    topTen[k] = searchIndex;
-                    spotFound = true;
-                    break;
-                }
-                //Find the smallest amount in the top ten
-                if (topTenAmount[k] < smallStake){
-                    smallStake = topTenAmount[k];
-                    indexSmall = k;
-                }
+        if(submissionCount < 10){
+            uint tmpAmount;
+            for (uint i=0; i< submissionCount; i++){
+                tmpAmount = (submissions[i].userCount-1)*userDeposit;
+                finalists.push(i);
+                finalistsAmounts.push(tmpAmount);
+                finalistsCount++;
             }
-            //If a spot isn't found then check and see if the submission amount is greaater than the smallest top ten amount
-            if(!spotFound){
-                if (submissionSum > smallStake){
-                    //If it is then write over the small submission with the current submission
-                    topTenAmount[indexSmall] = submissionSum;
-                    topTen[indexSmall] = searchIndex;
-                }
-            }
+            checkedForTies = true; //We didn't check for ties, but you don't need to if there is less than 10 submissions
         }
-        searchIndex = searchIndex + 1;
-        rng.getRandomNumber(block.timestamp);
-        topTenFound = true;
-        
+        else{
+            while (gasleft() > 100 && searchIndex < submissionCount){
+
+                submissionSum = (submissions[searchIndex].userCount - 1) * userDeposit;
+                spotFound = false;
+            
+                smallStake = topTenAmount[0];
+                indexSmall = 0;
+                for ( uint k=0; k < 10; k++){
+                    if (topTenAmount[k] == 0){
+                        topTenAmount[k] = submissionSum;
+                        topTen[k] = searchIndex;
+                        spotFound = true;
+                        break;
+                    }
+                    //Find the smallest amount in the top ten
+                    if (topTenAmount[k] < smallStake){
+                        smallStake = topTenAmount[k];
+                        indexSmall = k;
+                    }
+                }
+                //If a spot isn't found then check and see if the submission amount is greaater than the smallest top ten amount
+                if(!spotFound){
+                    if (submissionSum > smallStake){
+                        //If it is then write over the small submission with the current submission
+                        topTenAmount[indexSmall] = submissionSum;
+                        topTen[indexSmall] = searchIndex;
+                    }
+                }
+            }
+            searchIndex = searchIndex + 1;
+            rng.getRandomNumber(block.timestamp);
+            topTenFound = true;
+        }
     }
 
     function checkForTies() external onlyPoolOwner {

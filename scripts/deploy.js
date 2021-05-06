@@ -1,9 +1,9 @@
 // scripts/deploy.js
 async function main() {
-    const TwitterVerify = await ethers.getContractFactory("twitterverify");
-    console.log("Deploying twitterverify...");
-    const twitterverify = await TwitterVerify.deploy();
-    console.log("twitterverify deployed to:", twitterverify.address);
+    const Storage = await ethers.getContractFactory("Storage");
+    console.log("Deploying Storage...");
+    const storage = await Storage.deploy();
+    console.log("Storage deployed to:", storage.address);
   }
   
   main()
