@@ -86,7 +86,9 @@ contract Pool {
     function getName() external view returns(string memory){
         return poolName;
     }
-
+    /*
+    * After a pool is created, the owner needs to transfer the funds to the pool in order to back it
+    */
     function backPool() external onlyPoolOwner {
         require(!backedByFunds, "Pool already backed by funds!");
         require(token.transferFrom(msg.sender, address(this), funds), "trandferFrom failed, pool not backed by funds!");
@@ -100,7 +102,10 @@ contract Pool {
     function seePoolBacking() external view returns(uint){
         return token.balanceOf(address(this));
     }
-    
+    /*
+    * @dev allow artists to create submissions
+    * Require artist to deposit tokens, and to transfer NFTs
+    */
     function createSubmission( uint[3] memory nfts) external checkFunds {
         require(block.timestamp < submissionEndTime, "Can not add submissions during the fan voting period");
         require(token.transferFrom(msg.sender, address(this), userDeposit), "trandferFrom failed, submission not backed by funds!");
