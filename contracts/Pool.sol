@@ -104,7 +104,7 @@ contract Pool {
     }
     /*
     * @dev allow artists to create submissions
-    * Require artist to deposit tokens, and to transfer NFTs
+    * Require artist to transfer userDeposit, and to transfer NFTs
     */
     function createSubmission( uint[3] memory nfts) external checkFunds {
         require(block.timestamp < submissionEndTime, "Can not add submissions during the fan voting period");
@@ -124,6 +124,10 @@ contract Pool {
         submissionCount++;
     }
     
+    /*
+    * @dev allow fans to vote on submissions
+    * Require caller transfers userDeposit to contract
+    */
     function fanVote(uint _submissionNumber) external onlyFans checkFunds {
         //TODO I think its okay to read the zero address of an empty array, I am assuming it returns zero but I need to verify this!
         require( msg.sender != submissions[_submissionNumber].users[0].user, "Artist can not vote for their own submission!");
@@ -149,7 +153,10 @@ contract Pool {
         
     }
     
-    //TODO could add a check that if submissionCount is <= 10, just make the finalists == to the submissions
+    /* 
+    * @dev Find the top ten submissions based off of votes. If there are less than 10 submissions, set the finalists equal to the submissions
+    * The while loop with the gas checking has not been verified to work, just trying to think of ways to allow for infinitely large submission count.
+    */
     function getTopTen() external onlyPoolOwner{
         require(searchIndex < submissionCount, "Already found top ten from all submissions!");
         require(block.timestamp > fanVotingEndTime, "Cannot select top ten until fan voting is over!");
@@ -204,7 +211,11 @@ contract Pool {
             topTenFound = true;
         }
     }
-
+    /*
+    *Need to check for ties! This will find the lowest vote submission in the top ten, then go through all submissions and check and see if they are of equal value to the lowest voted submission in the top ten
+    * If they are, then just add the to the finalists
+    * Logic might need to be updated if say the lowest voted in the top ten has one vote, and 50 other submissions have one vote.
+    */
     function checkForTies() external onlyPoolOwner {
         require(topTenFound, "Need to run getTopTen first!");
         require(!checkedForTies, "Already checked for ties");
