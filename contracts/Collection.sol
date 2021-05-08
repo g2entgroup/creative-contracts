@@ -1,14 +1,17 @@
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "../../node_modules/@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "../../node_modules/@openzeppelin/contracts/access/Ownable.sol";
-import "../../node_modules/@openzeppelin/contracts/utils/Counters.sol";
 import "../../node_modules/@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
-contract Collection is ERC721,Ownable,ERC721URIStorage {
-    using Counters for Counters.Counter;
+contract Collection is Ownable,ERC721URIStorage {
+    // using Counters for Counters.Counter;
 
-    Counters.Counter private _tokenIdTracker;
+    // Counters.Counter private _tokenIdTracker;
+
+    string public baseURI;
+
+    uint public currentTokenID;
 
     /// @notice The EIP-712 typehash for the contract's domain
     bytes32 public constant DOMAIN_TYPEHASH = keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)");
@@ -16,15 +19,18 @@ contract Collection is ERC721,Ownable,ERC721URIStorage {
     /// @notice The EIP-712 typehash for the contract's permit
     bytes32 public constant PERMIT_TYPEHASH = keccak256("Permit(address holder,address spender,uint256 nonce,uint256 expiry,bool allowed)");
 
+    /// @notice A record of states for signing / validating signatures
+    mapping (address => uint) public nonces;
 
     constructor(
         string memory _name,
         string memory _symbol,
         string memory _baseUri,
-        address owner
-    ) public Ownable() ERC721(_name, _symbol) {
-        _setBaseURI(_baseUri);
-        transferOwnership(owner);
+        address _owner
+    ) public ERC721(_name, _symbol) {
+        _changeBaseURI(_baseUri);
+        transferOwnership(_owner);
+        currentTokenID = 0;
     }
 
     /** ===================== external mutative function ===================== */
@@ -41,7 +47,7 @@ contract Collection is ERC721,Ownable,ERC721URIStorage {
         _changeBaseURI(baseURI_);
     }
 
-    /**
+    /*
      * @notice Triggers an approval from owner to spends
      * @param holder The address to approve from
      * @param spender The address to be approved
@@ -55,20 +61,21 @@ contract Collection is ERC721,Ownable,ERC721URIStorage {
     function singlepermit(address holder, address spender, uint256 nonce, uint256 expiry, uint _tokenId,
                     bool allowed, uint8 v, bytes32 r, bytes32 s) external
     {
+        string memory name = name();
         bytes32 DOMAIN_SEPARATOR = keccak256(abi.encode(DOMAIN_TYPEHASH,keccak256(bytes(name)),getChainId(),address(this)));
         bytes32 STRUCTHASH = keccak256(abi.encode(PERMIT_TYPEHASH,holder,spender,nonce,expiry,allowed));
         bytes32 digest = keccak256(abi.encodePacked("\x19\x01",DOMAIN_SEPARATOR,STRUCTHASH));
 
         require(holder != address(0), "invalid-address-0");
         require(holder == ecrecover(digest, v, r, s), "invalid-permit");
-        require(expiry == 0 || now <= expiry, "permit-expired");
+        require(expiry == 0 || block.timestamp <= expiry, "permit-expired");
         require(nonce == nonces[holder]++, "invalid-nonce");
         uint tokenId = allowed ? _tokenId : 0;
-        _approve(to, tokenId);
-        emit Approvalwithpermit(holder, spender, tokenId);
+        _approve(spender, tokenId);
+        emit approvalwithpermit(holder, spender, tokenId);
     }
 
-    /**
+    /*
      * @notice Triggers an approval from owner to spends
      * @param holder The address to approve from
      * @param spender The address to be approved
@@ -80,18 +87,19 @@ contract Collection is ERC721,Ownable,ERC721URIStorage {
      * @param s Half of the ECDSA signature pair
      */
     function allpermit(address holder, address spender, uint256 nonce, uint256 expiry,
-                    bool approved, uint8 v, bytes32 r, bytes32 s) external
+                    bool allowed, uint8 v, bytes32 r, bytes32 s) external
     {
+        string memory name = name();
         bytes32 DOMAIN_SEPARATOR = keccak256(abi.encode(DOMAIN_TYPEHASH,keccak256(bytes(name)),getChainId(),address(this)));
         bytes32 STRUCTHASH = keccak256(abi.encode(PERMIT_TYPEHASH,holder,spender,nonce,expiry,allowed));
         bytes32 digest = keccak256(abi.encodePacked("\x19\x01",DOMAIN_SEPARATOR,STRUCTHASH));
 
         require(holder != address(0), "invalid-address-0");
         require(holder == ecrecover(digest, v, r, s), "invalid-permit");
-        require(expiry == 0 || now <= expiry, "permit-expired");
+        require(expiry == 0 || block.timestamp <= expiry, "permit-expired");
         require(nonce == nonces[holder]++, "invalid-nonce");
-        setApprovalForAll(to, approved);
-        emit Approvalallwithpermit(holder, spender);
+        setApprovalForAll(spender, allowed);
+        emit approvalwithallpermit(holder, spender);
     }
 
     function changetokenURI(uint256 tokenId, string memory tokenURI) external onlytokenOwner(tokenId) {
@@ -111,22 +119,38 @@ contract Collection is ERC721,Ownable,ERC721URIStorage {
 
     function _singlemint(address to) internal {
         require(to != address(0), "to address is not allowed be zero");
-        _safeMint(to, _tokenIdTracker.current());
-        _tokenIdTracker.increment();
+        _safeMint(to, currentTokenID);
+        currentTokenID++;
     }
     
     function _changeBaseURI(string memory baseURI_) internal {
-        _setBaseURI(baseURI_);
+        require(bytes(baseURI_).length > 0);
+        baseURI = baseURI_;
+        emit changedbaseURI(_msgSender(), baseURI);
     }
     
     function _changetokenURI(uint256 tokenId, string memory tokenURI) internal {
         _setTokenURI(tokenId, tokenURI);
-        emit changedtokenURI(msg.sender, tokenId, tokenURI);
+        emit changedtokenURI(_msgSender(), tokenId, tokenURI);
+    }
+
+
+    /** ===================== internal view function ===================== */
+
+    function getChainId() internal view returns (uint) {
+        uint256 chainId;
+        assembly { chainId := chainid() }
+        return chainId;
+    }
+
+    function _baseURI() internal view override returns (string memory) {
+        return baseURI;
     }
 
     /** ===================== modifier ===================== */
+
     modifier onlytokenOwner(uint tokenId) {
-        require(ownerOf(tokenId) == msg.sender, "Only the owner can modify the tokenURI");
+        require(ownerOf(tokenId) == _msgSender(), "Only the owner can modify the tokenURI");
         _;
     }
     
@@ -135,8 +159,9 @@ contract Collection is ERC721,Ownable,ERC721URIStorage {
     
     event batchmints(address indexed to, uint indexed amount);
     event changedtokenURI(address indexed owner, uint indexed tokenId, string indexed tokenURI);
-    event Approvalwithpermit(address indexed holder, address indexed spender, uint indexed tokenId);
-    event Approvalwithallpermit(address indexed holder, address indexed spender);
+    event changedbaseURI(address indexed, string indexed baseURI);
+    event approvalwithpermit(address indexed holder, address indexed spender, uint indexed tokenId);
+    event approvalwithallpermit(address indexed holder, address indexed spender);
 
     
 }
