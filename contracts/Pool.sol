@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 //TODO instead of distributing rewards, there should be a new settling contract created where the artist and brand can have a back and forth over the design of the final NFT
 //This contract would pay out the rewards
-//TODO add support for another ERC20 token that can be used aas a pirxe pool for first second and third submissions
+//TODO add support for another ERC20 token that can be used as a prize pool for first second and third submissions.
 contract Pool {
     
     address poolOwner;
