@@ -14,7 +14,7 @@ contract Pool {
     IERC20 private token; //The input token for the pool campaign usually CRTV
     IERC721 private nft;
     iRandomNumberGenerator private rng;
-    string public poolName; //Brand can call the pool whatever they want IE "Campaing to design the next Coca Cola Bear"
+    string public poolName; //Brand can call the pool whatever they want IE "Campaign to design the next Coca Cola Bear NFT"
     string public brandName; //Pulled from Twitter handle is not changeable
     uint public funds; //Capital Pool owner deposits to start pool!
     uint public submissionEndTime;
