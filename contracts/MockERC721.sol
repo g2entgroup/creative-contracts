@@ -10,5 +10,20 @@ contract MockNFT is ERC721 {
             _safeMint(addr2, i+3);
             _safeMint(addr3, i+6);
         }
+        for (uint i=11; i<14; i++){
+            _safeMint(addr1, i);
+            _safeMint(addr2, i+3);
+            _safeMint(addr3, i+6);
+        }
+        for (uint i=21; i<24; i++){
+            _safeMint(addr1, i);
+            _safeMint(addr2, i+3);
+            _safeMint(addr3, i+6);
+        }
+        for (uint i=31; i<34; i++){
+            _safeMint(addr1, i);
+            _safeMint(addr2, i+3);
+            _safeMint(addr3, i+6);
+        }
     }
 }

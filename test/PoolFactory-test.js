@@ -16,13 +16,16 @@ let owner;
 let addr1; // Test user 1
 let addr2; // Test user 2
 let addr3; // Test user 3
+let addr4; // Test user 4
+let addr5; // Test user 5
+let addr6; // Test user 6
 let brand; // Test Brand
 
 beforeEach(async function () {
-    [owner, addr1, addr2, addr3, brand] = await ethers.getSigners();
+    [owner, addr1, addr2, addr3, addr4, addr5, addr6, brand] = await ethers.getSigners();
 
     MockERC20 = await ethers.getContractFactory("MockToken");
-    mockERC20 = await MockERC20.deploy(addr1.address, addr2.address, addr3.address, brand.address);
+    mockERC20 = await MockERC20.deploy(addr1.address, addr2.address, addr3.address, addr4.address, addr5.address, addr6.address, brand.address);
     await mockERC20.deployed();  
 
     MockERC721 = await ethers.getContractFactory("MockNFT");

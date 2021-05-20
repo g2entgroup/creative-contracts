@@ -8,6 +8,7 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 //TODO instead of distributing rewards, there should be a new settling contract created where the artist and brand can have a back and forth over the design of the final NFT
 //This contract would pay out the rewards
 //TODO add support for another ERC20 token that can be used as a prize pool for first second and third submissions.
+//TODO in checkForTies() the rng part has been commented out(At the bottom of the function). This is bc when testing the contract locally, there is no oracle network for the contract to talk to and get a random number.
 contract Pool {
     
     address poolOwner;
@@ -221,7 +222,7 @@ contract Pool {
             
         }
         checkedForTies = true;
-        rng.getRandomNumber(block.timestamp);
+        //rng.getRandomNumber(block.timestamp);
     }
     
     function selectWinner(uint submissionIndex) external onlyPoolOwner{
