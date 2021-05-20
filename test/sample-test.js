@@ -1,7 +1,8 @@
+/*
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 const { isCallTrace } = require("hardhat/internal/hardhat-network/stack-traces/message-trace");
-
+*/
 /*
  *Looks like initial contract calls are executed from the owner account
  *After that, you can do storage.connect(addr1).functionName();
@@ -18,7 +19,7 @@ const { isCallTrace } = require("hardhat/internal/hardhat-network/stack-traces/m
  * await network.provider.send("evm_mine")
  * ^^^^^ How to set the timestamp of the next block
  */
-
+/*
  //Declare variables to be assigned in the beforeEach callback
 let Storage;
 let storage;
@@ -81,3 +82,4 @@ describe("Storage Functionality Tests", function() {
             expect((await storage.retrieve()).toString()).to.equal("89544835938");
         });
 });
+*/

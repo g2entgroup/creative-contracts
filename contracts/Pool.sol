@@ -47,7 +47,7 @@ contract Pool {
     }
     
     mapping(uint => submission) public submissions;
-    uint submissionCount = 0;
+    uint submissionCount = 1;
     
     modifier onlyPoolOwner(){
         require (msg.sender == poolOwner, "Only the Pool Owner can call this function!");
@@ -101,6 +101,14 @@ contract Pool {
 
     function seePoolBacking() external view returns(uint){
         return token.balanceOf(address(this));
+    }
+
+    function getTopTen() external view returns(uint[10] memory){
+        return topTen;
+    }
+
+    function getTopTenAmount() external view returns(uint[10] memory){
+        return topTenAmount;
     }
     /*
     * @dev allow artists to create submissions
@@ -161,14 +169,21 @@ contract Pool {
             if (topTenAmount[i] < smallStake){
                 smallStake = topTenAmount[i];
                 indexSmall = i;
-                if (topTenAmount[i] == 0){
-                    break;
-                }
+            }
+        }
+
+        //Check if the submission is already in the top ten
+        bool alreadyInTopTen = false;
+        for (uint i=0; i<10; i++){
+            if (topTen[i] == _submissionNumber){
+                alreadyInTopTen = true;
+                topTenAmount[i] = votes;
+                break;
             }
         }
 
         //Check if this submissions vote count is greater than the smallest. If it is replace it
-        if (votes > topTenAmount[indexSmall]) {
+        if (!alreadyInTopTen && (votes > topTenAmount[indexSmall])) {
             topTenAmount[indexSmall] = votes;
             topTen[indexSmall] = _submissionNumber;
         }
@@ -196,7 +211,7 @@ contract Pool {
             }
         }
         uint tmpAmount;
-        for (uint i=0; i<submissionCount; i++){
+        for (uint i=1; i<submissionCount; i++){
             tmpAmount = (submissions[i].userCount-1)*userDeposit;
             if (smallStake == tmpAmount){
                 finalists.push(i);
@@ -212,7 +227,7 @@ contract Pool {
     function selectWinner(uint submissionIndex) external onlyPoolOwner{
         require(!winnerSelected, "Already selected winner!");
         require(block.timestamp > campaignEndTime, "Can only choose a winner after the campaign is over!");
-        require(checkedForTies, "You have to call checForTies first!");
+        require(checkedForTies, "You have to call checkForTies first!");
         winnerSelected = true;
         bool winnerInTopTen;
         for (uint i=0; i<finalistsCount; i++){

@@ -197,7 +197,62 @@ describe("Pool Fan Functionality Tests", function() {
         await network.provider.send("evm_mine");
 
         await mockERC20.connect(addr2).approve(pool.address, "100000000000000000000");
-        await pool.connect(addr2).fanVote("0");
+        await pool.connect(addr2).fanVote("1");
+    });
+
+    it("When fans vote on submissions, the top ten count should update", async function() {
+        await mockERC20.connect(brand).approve(pool.address, "1000000000000000000000");
+        await pool.connect(brand).backPool();
+        
+        //Create submission 0
+        await mockERC20.connect(addr1).approve(pool.address, "100000000000000000000");
+        let nfts = ["1", "2", "3"];
+        await mockERC721.connect(addr1).approve(pool.address, "1");
+        await mockERC721.connect(addr1).approve(pool.address, "2");
+        await mockERC721.connect(addr1).approve(pool.address, "3");
+        await pool.connect(addr1).createSubmission(nfts);
+
+        //Create submission 1
+        await mockERC20.connect(addr2).approve(pool.address, "100000000000000000000");
+        let nfts1 = ["4", "5", "6"];
+        await mockERC721.connect(addr2).approve(pool.address, "4"); //Approve the pool to transfer nft w/ tokenId 1
+        await mockERC721.connect(addr2).approve(pool.address, "5"); //Approve the pool to transfer nft w/ tokenId 2
+        await mockERC721.connect(addr2).approve(pool.address, "6"); //Approve the pool to transfer nft w/ tokenId 3
+        await pool.connect(addr2).createSubmission(nfts1);
+
+        //Create submission 2
+        await mockERC20.connect(addr3).approve(pool.address, "100000000000000000000");
+        let nfts2 = ["7", "8", "9"];
+        await mockERC721.connect(addr3).approve(pool.address, "7"); //Approve the pool to transfer nft w/ tokenId 1
+        await mockERC721.connect(addr3).approve(pool.address, "8"); //Approve the pool to transfer nft w/ tokenId 2
+        await mockERC721.connect(addr3).approve(pool.address, "9"); //Approve the pool to transfer nft w/ tokenId 3
+        await pool.connect(addr3).createSubmission(nfts2);
+
+        //Advance time to make it the fan voiting period
+        await network.provider.send("evm_increaseTime", [150]);
+        await network.provider.send("evm_mine");
+
+        await mockERC20.connect(addr2).approve(pool.address, "100000000000000000000");
+        await pool.connect(addr2).fanVote("1");
+
+        await mockERC20.connect(addr1).approve(pool.address, "100000000000000000000");
+        await pool.connect(addr1).fanVote("3");
+
+        await mockERC20.connect(addr3).approve(pool.address, "100000000000000000000");
+        await pool.connect(addr3).fanVote("2");
+
+        await mockERC20.connect(addr3).approve(pool.address, "100000000000000000000");
+        await pool.connect(addr3).fanVote("1");
+
+        let topTen = await pool.getTopTen();
+        expect (topTen[0]).to.equal("1");
+        expect (topTen[1]).to.equal("3");
+        expect (topTen[2]).to.equal("2");
+
+        let topTenAmount = await pool.getTopTenAmount();
+        expect (topTenAmount[0]).to.equal("200000000000000000000");
+        expect (topTenAmount[1]).to.equal("100000000000000000000");
+        expect (topTenAmount[2]).to.equal("100000000000000000000");
     });
 
     it("Artitsts should not be able to vote on their own submissions", async function() {
