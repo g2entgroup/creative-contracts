@@ -1,4 +1,9 @@
-// scripts/deploy.js
+/*
+ * ***DEPRECATED DO NOT USE***
+ * Leaving this deploy script here strictly for reference only. 
+ * If you need to deploy a contract, you should use npx hardhat deploy
+ * Doing it this way saves all the contract meta data and makes verification much easier!
+ */
 async function main() {
     const Storage = await ethers.getContractFactory("Storage");
     console.log("Deploying Storage...");
