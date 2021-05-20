@@ -150,74 +150,38 @@ contract Pool {
             });
         submissions[_submissionNumber].users.push(fan);
         submissions[_submissionNumber].userCount++;
-        
+
+        //Calculate submission vote count
+        uint votes = (submissions[_submissionNumber].userCount - 1) * userDeposit;
+
+        //Find topten submission with least amount of votes
+        uint smallStake = topTenAmount[0];
+        uint indexSmall = 0;
+        for (uint i=0; i<10; i++){
+            if (topTenAmount[i] < smallStake){
+                smallStake = topTenAmount[i];
+                indexSmall = i;
+                if (topTenAmount[i] == 0){
+                    break;
+                }
+            }
+        }
+
+        //Check if this submissions vote count is greater than the smallest. If it is replace it
+        if (votes > topTenAmount[indexSmall]) {
+            topTenAmount[indexSmall] = votes;
+            topTen[indexSmall] = _submissionNumber;
+        }
     }
     
-    /* 
-    * @dev Find the top ten submissions based off of votes. If there are less than 10 submissions, set the finalists equal to the submissions
-    * The while loop with the gas checking has not been verified to work, just trying to think of ways to allow for infinitely large submission count.
-    */
-    function getTopTen() external onlyPoolOwner{
-        require(searchIndex < submissionCount, "Already found top ten from all submissions!");
-        require(block.timestamp > fanVotingEndTime, "Cannot select top ten until fan voting is over!");
-        require(block.timestamp < campaignEndTime, "Decision period is over!");
-        uint smallStake; //The submission with the smallest amount in the top ten. This is that small amount
-        uint indexSmall; //The index of the submission with the smallest amount in the top ten
-        uint submissionSum; // Used to add up the total vote count for a submission
-        bool spotFound; //Bool used to determine if the smallest top ten submission needs to be compared to the current submission vote sum
-        
-        if(submissionCount < 10){
-            uint tmpAmount;
-            for (uint i=0; i< submissionCount; i++){
-                tmpAmount = (submissions[i].userCount-1)*userDeposit;
-                finalists.push(i);
-                finalistsAmounts.push(tmpAmount);
-                finalistsCount++;
-            }
-            checkedForTies = true; //We didn't check for ties, but you don't need to if there is less than 10 submissions
-        }
-        else{
-            while (gasleft() > 100 && searchIndex < submissionCount){
-
-                submissionSum = (submissions[searchIndex].userCount - 1) * userDeposit;
-                spotFound = false;
-            
-                smallStake = topTenAmount[0];
-                indexSmall = 0;
-                for ( uint k=0; k < 10; k++){
-                    if (topTenAmount[k] == 0){
-                        topTenAmount[k] = submissionSum;
-                        topTen[k] = searchIndex;
-                        spotFound = true;
-                        break;
-                    }
-                    //Find the smallest amount in the top ten
-                    if (topTenAmount[k] < smallStake){
-                        smallStake = topTenAmount[k];
-                        indexSmall = k;
-                    }
-                }
-                //If a spot isn't found then check and see if the submission amount is greaater than the smallest top ten amount
-                if(!spotFound){
-                    if (submissionSum > smallStake){
-                        //If it is then write over the small submission with the current submission
-                        topTenAmount[indexSmall] = submissionSum;
-                        topTen[indexSmall] = searchIndex;
-                    }
-                }
-            }
-            searchIndex = searchIndex + 1;
-            rng.getRandomNumber(block.timestamp);
-            topTenFound = true;
-        }
-    }
     /*
     *Need to check for ties! This will find the lowest vote submission in the top ten, then go through all submissions and check and see if they are of equal value to the lowest voted submission in the top ten
     * If they are, then just add the to the finalists
     * Logic might need to be updated if say the lowest voted in the top ten has one vote, and 50 other submissions have one vote.
     */
     function checkForTies() external onlyPoolOwner {
-        require(topTenFound, "Need to run getTopTen first!");
+        require(block.timestamp > fanVotingEndTime, "Cannot select top ten until fan voting is over!");
+        require(block.timestamp < campaignEndTime, "Decision period is over!");
         require(!checkedForTies, "Already checked for ties");
         
         uint smallStake = topTenAmount[0];
@@ -242,6 +206,7 @@ contract Pool {
             
         }
         checkedForTies = true;
+        rng.getRandomNumber(block.timestamp);
     }
     
     function selectWinner(uint submissionIndex) external onlyPoolOwner{

@@ -69,10 +69,6 @@ describe("Pool Revert Tests", function() {
         await expect( pool.connect(addr1).changeName("TEST")).to.be.reverted;
     });
 
-    it("Should revert when someone other than pool owner calls getTopTen()", async function() {
-        await expect( pool.connect(addr1).getTopTen()).to.be.reverted;
-    });
-
     it("Should revert when someone other than pool owner calls checkForTies()", async function() {
         await expect( pool.connect(addr1).checkForTies()).to.be.reverted;
     });
@@ -100,10 +96,6 @@ describe("Pool Owner Functionality Tests", function() {
     it("Should allow pool owner to change the pool name", async function() {
         await pool.connect(brand).changeName("TEST_NAME");
         expect(await pool.connect(brand).getName()).to.equal("TEST_NAME");
-    });
-
-    it("Should revert when someone other than pool owner calls getTopTen()", async function() {
-        await expect( pool.connect(brand).getTopTen()).to.be.reverted;
     });
 
     it("Should revert when someone other than pool owner calls checkForTies()", async function() {
