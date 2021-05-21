@@ -42,7 +42,10 @@ beforeEach(async function () {
     await twitterverify.deployed();
     await twitterverify.createTestUser(brand.address);
 
-    RNG = await ethers.getContractFactory("RandomNumberConsumer");
+    //RNG = await ethers.getContractFactory("RandomNumberConsumer");
+    //rng = await RNG.deploy();
+    //await rng.deployed();
+    RNG = await ethers.getContractFactory("mockRNG");
     rng = await RNG.deploy();
     await rng.deployed();
 

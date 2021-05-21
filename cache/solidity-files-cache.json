@@ -1403,8 +1403,8 @@
       ]
     },
     "/home/crispy/SolidityRepo/creative-contracts/contracts/Pool.sol": {
-      "lastModificationDate": 1621547170090,
-      "contentHash": "725fe09429d62052cb234b1de4be226b",
+      "lastModificationDate": 1621548109730,
+      "contentHash": "f98c3c2d779999bb16482fc2ee3216bf",
       "sourceName": "contracts/Pool.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -1670,6 +1670,50 @@
       ],
       "artifacts": [
         "CRTVtoken"
+      ]
+    },
+    "/home/crispy/SolidityRepo/creative-contracts/contracts/mockRNG.sol": {
+      "lastModificationDate": 1621547988330,
+      "contentHash": "9b069d992a1016ae341d8cddf981ca3a",
+      "sourceName": "contracts/mockRNG.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/access/Ownable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "mockRNG"
       ]
     }
   }
