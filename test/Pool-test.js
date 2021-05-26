@@ -472,22 +472,271 @@ describe("CheckForTies Functionality", function() {
         await mockERC20.connect(addr5).approve(pool.address, "100000000000000000000");
         await pool.connect(addr5).fanVote("7");
 
+        await pool.connect(brand).checkForTies();
+
+        let topTen = await pool.getTopTen();
+        expect (topTen.length).to.equal(10);
+        expect (topTen[0]).to.equal("1");
+        expect (topTen[1]).to.equal("5");
+        expect (topTen[2]).to.equal("11");
+        expect (topTen[3]).to.equal("10");
+        expect (topTen[4]).to.equal("8");
+        expect (topTen[5]).to.equal("7");
+        expect (topTen[6]).to.equal("6");
+        expect (topTen[7]).to.equal("2");
+        expect (topTen[8]).to.equal("3");
+        expect (topTen[9]).to.equal("4");
+
+        let topTenAmount = await pool.getTopTenAmount();
+        expect (topTenAmount[0]).to.equal("300000000000000000000");
+        expect (topTenAmount[1]).to.equal("300000000000000000000");
+        expect (topTenAmount[2]).to.equal("300000000000000000000");
+        expect (topTenAmount[3]).to.equal("400000000000000000000");
+        expect (topTenAmount[4]).to.equal("500000000000000000000");
+        expect (topTenAmount[5]).to.equal("200000000000000000000");
+        expect (topTenAmount[6]).to.equal("100000000000000000000");
+        expect (topTenAmount[7]).to.equal("100000000000000000000");
+        expect (topTenAmount[8]).to.equal("200000000000000000000");
+        expect (topTenAmount[9]).to.equal("200000000000000000000");
+
+        let finalists = await pool.getfinalists();
+        expect (finalists.length).to.equal(11);
+        expect (finalists[0]).to.equal("1");
+        expect (finalists[1]).to.equal("5");
+        expect (finalists[2]).to.equal("11");
+        expect (finalists[3]).to.equal("10");
+        expect (finalists[4]).to.equal("8");
+        expect (finalists[5]).to.equal("7");
+        expect (finalists[6]).to.equal("6");
+        expect (finalists[7]).to.equal("2");
+        expect (finalists[8]).to.equal("3");
+        expect (finalists[9]).to.equal("4");
+        expect (finalists[10]).to.equal("9");
+
+        let finalistsAmount = await pool.getfinalistsAmount();
+        expect (finalistsAmount[0]).to.equal("300000000000000000000");
+        expect (finalistsAmount[1]).to.equal("300000000000000000000");
+        expect (finalistsAmount[2]).to.equal("300000000000000000000");
+        expect (finalistsAmount[3]).to.equal("400000000000000000000");
+        expect (finalistsAmount[4]).to.equal("500000000000000000000");
+        expect (finalistsAmount[5]).to.equal("200000000000000000000");
+        expect (finalistsAmount[6]).to.equal("100000000000000000000");
+        expect (finalistsAmount[7]).to.equal("100000000000000000000");
+        expect (finalistsAmount[8]).to.equal("200000000000000000000");
+        expect (finalistsAmount[9]).to.equal("200000000000000000000");
+        expect (finalistsAmount[10]).to.equal("100000000000000000000");
+
+    });
+
+});
+
+describe("selectWinner Functionality", function() {
+    it("Should allow for pool owners to select a winner if checkForTies has been called", async function() {
+        await mockERC20.connect(brand).approve(pool.address, "1000000000000000000000");
+        await pool.connect(brand).backPool();
+        
+        //Create submission 1
+        await mockERC20.connect(addr1).approve(pool.address, "100000000000000000000");
+        let nfts = ["1", "2", "3"];
+        await mockERC721.connect(addr1).approve(pool.address, "1");
+        await mockERC721.connect(addr1).approve(pool.address, "2");
+        await mockERC721.connect(addr1).approve(pool.address, "3");
+        await pool.connect(addr1).createSubmission(nfts);
+
+        //Create submission 2
+        await mockERC20.connect(addr2).approve(pool.address, "100000000000000000000");
+        let nfts1 = ["4", "5", "6"];
+        await mockERC721.connect(addr2).approve(pool.address, "4"); //Approve the pool to transfer nft w/ tokenId 1
+        await mockERC721.connect(addr2).approve(pool.address, "5"); //Approve the pool to transfer nft w/ tokenId 2
+        await mockERC721.connect(addr2).approve(pool.address, "6"); //Approve the pool to transfer nft w/ tokenId 3
+        await pool.connect(addr2).createSubmission(nfts1);
+
+        //Create submission 3
+        await mockERC20.connect(addr3).approve(pool.address, "100000000000000000000");
+        let nfts2 = ["7", "8", "9"];
+        await mockERC721.connect(addr3).approve(pool.address, "7"); //Approve the pool to transfer nft w/ tokenId 1
+        await mockERC721.connect(addr3).approve(pool.address, "8"); //Approve the pool to transfer nft w/ tokenId 2
+        await mockERC721.connect(addr3).approve(pool.address, "9"); //Approve the pool to transfer nft w/ tokenId 3
+        await pool.connect(addr3).createSubmission(nfts2);
+
+        //Create submission 4
+        await mockERC20.connect(addr1).approve(pool.address, "100000000000000000000");
+        let nfts3 = ["11", "12", "13"];
+        await mockERC721.connect(addr1).approve(pool.address, "11");
+        await mockERC721.connect(addr1).approve(pool.address, "12");
+        await mockERC721.connect(addr1).approve(pool.address, "13");
+        await pool.connect(addr1).createSubmission(nfts3);
+
+        //Create submission 5
+        await mockERC20.connect(addr2).approve(pool.address, "100000000000000000000");
+        let nfts4 = ["14", "15", "16"];
+        await mockERC721.connect(addr2).approve(pool.address, "14"); //Approve the pool to transfer nft w/ tokenId 1
+        await mockERC721.connect(addr2).approve(pool.address, "15"); //Approve the pool to transfer nft w/ tokenId 2
+        await mockERC721.connect(addr2).approve(pool.address, "16"); //Approve the pool to transfer nft w/ tokenId 3
+        await pool.connect(addr2).createSubmission(nfts4);
+
+        //Create submission 6
+        await mockERC20.connect(addr3).approve(pool.address, "100000000000000000000");
+        let nfts5 = ["17", "18", "19"];
+        await mockERC721.connect(addr3).approve(pool.address, "17"); //Approve the pool to transfer nft w/ tokenId 1
+        await mockERC721.connect(addr3).approve(pool.address, "18"); //Approve the pool to transfer nft w/ tokenId 2
+        await mockERC721.connect(addr3).approve(pool.address, "19"); //Approve the pool to transfer nft w/ tokenId 3
+        await pool.connect(addr3).createSubmission(nfts5);
+
+        //Create submission 7
+        await mockERC20.connect(addr1).approve(pool.address, "100000000000000000000");
+        let nfts6 = ["21", "22", "23"];
+        await mockERC721.connect(addr1).approve(pool.address, "21");
+        await mockERC721.connect(addr1).approve(pool.address, "22");
+        await mockERC721.connect(addr1).approve(pool.address, "23");
+        await pool.connect(addr1).createSubmission(nfts6);
+
+        //Create submission 8
+        await mockERC20.connect(addr2).approve(pool.address, "100000000000000000000");
+        let nfts7 = ["24", "25", "26"];
+        await mockERC721.connect(addr2).approve(pool.address, "24"); //Approve the pool to transfer nft w/ tokenId 1
+        await mockERC721.connect(addr2).approve(pool.address, "25"); //Approve the pool to transfer nft w/ tokenId 2
+        await mockERC721.connect(addr2).approve(pool.address, "26"); //Approve the pool to transfer nft w/ tokenId 3
+        await pool.connect(addr2).createSubmission(nfts7);
+
+        //Create submission 9
+        await mockERC20.connect(addr3).approve(pool.address, "100000000000000000000");
+        let nfts8 = ["27", "28", "29"];
+        await mockERC721.connect(addr3).approve(pool.address, "27"); //Approve the pool to transfer nft w/ tokenId 1
+        await mockERC721.connect(addr3).approve(pool.address, "28"); //Approve the pool to transfer nft w/ tokenId 2
+        await mockERC721.connect(addr3).approve(pool.address, "29"); //Approve the pool to transfer nft w/ tokenId 3
+        await pool.connect(addr3).createSubmission(nfts8);
+
+        //Create submission 10
+        await mockERC20.connect(addr1).approve(pool.address, "100000000000000000000");
+        let nfts9 = ["31", "32", "33"];
+        await mockERC721.connect(addr1).approve(pool.address, "31");
+        await mockERC721.connect(addr1).approve(pool.address, "32");
+        await mockERC721.connect(addr1).approve(pool.address, "33");
+        await pool.connect(addr1).createSubmission(nfts9);
+
+        //Create submission 11
+        await mockERC20.connect(addr2).approve(pool.address, "100000000000000000000");
+        let nfts10 = ["34", "35", "36"];
+        await mockERC721.connect(addr2).approve(pool.address, "34"); //Approve the pool to transfer nft w/ tokenId 1
+        await mockERC721.connect(addr2).approve(pool.address, "35"); //Approve the pool to transfer nft w/ tokenId 2
+        await mockERC721.connect(addr2).approve(pool.address, "36"); //Approve the pool to transfer nft w/ tokenId 3
+        await pool.connect(addr2).createSubmission(nfts10);
+
+        //Create submission 12
+        await mockERC20.connect(addr3).approve(pool.address, "100000000000000000000");
+        let nfts11 = ["37", "38", "39"];
+        await mockERC721.connect(addr3).approve(pool.address, "37"); //Approve the pool to transfer nft w/ tokenId 1
+        await mockERC721.connect(addr3).approve(pool.address, "38"); //Approve the pool to transfer nft w/ tokenId 2
+        await mockERC721.connect(addr3).approve(pool.address, "39"); //Approve the pool to transfer nft w/ tokenId 3
+        await pool.connect(addr3).createSubmission(nfts11);
+
         //Advance time to make it the fan voiting period
-        //await network.provider.send("evm_increaseTime", [55]);
-        //await network.provider.send("evm_mine");
+        await network.provider.send("evm_increaseTime", [150]);
+        await network.provider.send("evm_mine");
+
+        //Submissions with 3 votes
+        await mockERC20.connect(addr4).approve(pool.address, "100000000000000000000");
+        await pool.connect(addr4).fanVote("1");
+
+        await mockERC20.connect(addr5).approve(pool.address, "100000000000000000000");
+        await pool.connect(addr5).fanVote("1");
+
+        await mockERC20.connect(addr6).approve(pool.address, "100000000000000000000");
+        await pool.connect(addr6).fanVote("1");
+
+        await mockERC20.connect(addr4).approve(pool.address, "100000000000000000000");
+        await pool.connect(addr4).fanVote("5");
+
+        await mockERC20.connect(addr5).approve(pool.address, "100000000000000000000");
+        await pool.connect(addr5).fanVote("5");
+
+        await mockERC20.connect(addr6).approve(pool.address, "100000000000000000000");
+        await pool.connect(addr6).fanVote("5");
+
+        await mockERC20.connect(addr4).approve(pool.address, "100000000000000000000");
+        await pool.connect(addr4).fanVote("11");
+
+        await mockERC20.connect(addr5).approve(pool.address, "100000000000000000000");
+        await pool.connect(addr5).fanVote("11");
+
+        await mockERC20.connect(addr6).approve(pool.address, "100000000000000000000");
+        await pool.connect(addr6).fanVote("11");
+
+        //Submission with 4 votes
+        await mockERC20.connect(addr4).approve(pool.address, "100000000000000000000");
+        await pool.connect(addr4).fanVote("10");
+
+        await mockERC20.connect(addr5).approve(pool.address, "100000000000000000000");
+        await pool.connect(addr5).fanVote("10");
+
+        await mockERC20.connect(addr6).approve(pool.address, "100000000000000000000");
+        await pool.connect(addr6).fanVote("10");
+
+        await mockERC20.connect(addr2).approve(pool.address, "100000000000000000000");
+        await pool.connect(addr2).fanVote("10");
+
+        //Submission with 5 votes
+        await mockERC20.connect(addr4).approve(pool.address, "100000000000000000000");
+        await pool.connect(addr4).fanVote("8");
+
+        await mockERC20.connect(addr5).approve(pool.address, "100000000000000000000");
+        await pool.connect(addr5).fanVote("8");
+
+        await mockERC20.connect(addr6).approve(pool.address, "100000000000000000000");
+        await pool.connect(addr6).fanVote("8");
+
+        await mockERC20.connect(addr3).approve(pool.address, "100000000000000000000");
+        await pool.connect(addr3).fanVote("8");
+
+        await mockERC20.connect(addr1).approve(pool.address, "100000000000000000000");
+        await pool.connect(addr1).fanVote("8");
+
+        //Three submissions tied for last with one vote
+        await mockERC20.connect(addr4).approve(pool.address, "100000000000000000000");
+        await pool.connect(addr4).fanVote("9");
+
+        await mockERC20.connect(addr4).approve(pool.address, "100000000000000000000");
+        await pool.connect(addr4).fanVote("6");
+
+        await mockERC20.connect(addr4).approve(pool.address, "100000000000000000000");
+        await pool.connect(addr4).fanVote("2");
+
+        //Submissions with 2 votes
+        await mockERC20.connect(addr4).approve(pool.address, "100000000000000000000");
+        await pool.connect(addr4).fanVote("3");
+
+        await mockERC20.connect(addr5).approve(pool.address, "100000000000000000000");
+        await pool.connect(addr5).fanVote("3");
+
+        await mockERC20.connect(addr4).approve(pool.address, "100000000000000000000");
+        await pool.connect(addr4).fanVote("4");
+
+        await mockERC20.connect(addr5).approve(pool.address, "100000000000000000000");
+        await pool.connect(addr5).fanVote("4");
+
+        await mockERC20.connect(addr4).approve(pool.address, "100000000000000000000");
+        await pool.connect(addr4).fanVote("7");
+
+        await mockERC20.connect(addr5).approve(pool.address, "100000000000000000000");
+        await pool.connect(addr5).fanVote("7");
+
+        await expect(pool.connect(addr1).selectWinner(1)).to.be.reverted; // check if call is reverted if called by non pool owner
+
+        await expect(pool.connect(brand).selectWinner(1)).to.be.reverted; // should revert if campaign isn't over
 
         await pool.connect(brand).checkForTies();
 
-        /*
-        let topTen = await pool.getTopTen();
-        expect (topTen[0]).to.equal("1");
-        expect (topTen[1]).to.equal("2");
-        expect (topTen[2]).to.equal("3");
+        //Advance time to make it the fan voiting period
+        await network.provider.send("evm_increaseTime", [150]);
+        await network.provider.send("evm_mine");
 
-        let topTenAmount = await pool.getTopTenAmount();
-        expect (topTenAmount[0]).to.equal("200000000000000000000");
-        expect (topTenAmount[1]).to.equal("100000000000000000000");
-        expect (topTenAmount[2]).to.equal("100000000000000000000");
-        */
+        await expect(pool.connect(brand).selectWinner(12)).to.be.reverted; // check if call is reverted if chosen winner isn't a finalist
+
+        await pool.connect(brand).selectWinner(8);
+
     });
+
 });
+
+//TODO create test for cash out
