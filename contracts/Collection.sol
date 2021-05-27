@@ -1,40 +1,65 @@
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+//SPDX-License-Identifier: MIT
+pragma solidity ^0.7.1;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import {RedirectAll, ISuperToken, IConstantFlowAgreementV1, ISuperfluid} from "./RedirectAll.sol";
+import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
-contract Collection is Ownable,ERC721URIStorage {
-    // using Counters for Counters.Counter;
+contract TradeableCashflow is ERC721, RedirectAll {
 
-    // Counters.Counter private _tokenIdTracker;
+  address internal internalContract;
 
-    string public baseURI;
+  address private owner;
+  
+  uint public currentTokenID;
 
-    uint public currentTokenID;
+  /// @notice The EIP-712 typehash for the contract's domain
+  bytes32 public constant DOMAIN_TYPEHASH = keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)");
 
-    /// @notice The EIP-712 typehash for the contract's domain
-    bytes32 public constant DOMAIN_TYPEHASH = keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)");
+  /// @notice The EIP-712 typehash for the contract's permit
+  bytes32 public constant PERMIT_TYPEHASH = keccak256("Permit(address holder,address spender,uint256 nonce,uint256 expiry,bool allowed)");
 
-    /// @notice The EIP-712 typehash for the contract's permit
-    bytes32 public constant PERMIT_TYPEHASH = keccak256("Permit(address holder,address spender,uint256 nonce,uint256 expiry,bool allowed)");
+  /// @notice A record of states for signing / validating signatures
+  mapping (address => uint) public nonces;
 
-    /// @notice A record of states for signing / validating signatures
-    mapping (address => uint) public nonces;
+  constructor (
+    address _owner,
+    string memory _name,
+    string memory _symbol,
+    string memory _baseURI,
+    ISuperfluid host,
+    IConstantFlowAgreementV1 cfa,
+    ISuperToken acceptedToken
+  )
+    ERC721 ( _name, _symbol)
+    RedirectAll (
+      host,
+      cfa,
+      acceptedToken,
+      _owner
+     )
+      {
+      _mint(owner, 1);
+      _setBaseURI(_baseURI);
+      owenr = _owner;
+      currentTokenID = 0;
+  }
 
-    constructor(
-        string memory _name,
-        string memory _symbol,
-        string memory _baseUri,
-        address _owner
-    ) public ERC721(_name, _symbol) {
-        _changeBaseURI(_baseUri);
-        transferOwnership(_owner);
-        currentTokenID = 0;
-    }
+  /** ========== public view function ========== */
+  /**
+  * @dev Returns the address of the current owner.
+  */
+  function owner() public view virtual returns (address) {
+      return owner;
+  }
 
-    /** ===================== external mutative function ===================== */
 
+  /** ========== public mutative function ========== */
+  function safeTransferFrom(address from, address to, uint256 tokenId) public override {
+        safeTransferFrom(from, to, tokenId, "");
+  }
+
+
+  /** ========== external mutative function ========== */
     function mint(address to) external {
         _singlemint(to);
     }
@@ -43,11 +68,7 @@ contract Collection is Ownable,ERC721URIStorage {
         _batchmint(to,amount);
     }
 
-    function changeBaseURI(string memory baseURI_) external onlyOwner {
-        _changeBaseURI(baseURI_);
-    }
-
-    /*
+  /*
      * @notice Triggers an approval from owner to spends
      * @param holder The address to approve from
      * @param spender The address to be approved
@@ -102,66 +123,83 @@ contract Collection is Ownable,ERC721URIStorage {
         emit approvalwithallpermit(holder, spender);
     }
 
-    function changetokenURI(uint256 tokenId, string memory tokenURI) external onlytokenOwner(tokenId) {
-        _changetokenURI(tokenId, tokenURI);
+
+  /** ========== external mutative onlyOwner function ========== */
+
+  function setBaseURI(string memory baseURI_) external onlyOwner {
+    _setBaseURI(baseURI_);
+  }
+
+  function setTokenURI(uint256 tokenId, string memory _tokenURI) onlyOwner {
+    _setTokenURI(tokenId,_tokenURI);
+  }
+
+  function setInternalContract(address _internalContract) external onlyOwner {
+    require(_internalContract == address(0), "you can set a null addresss");
+    internalContract = _internalContract;
+  }
+
+  function transferOwnership(address newOwner) public virtual onlyOwner {
+    require(newOwner != address(0), "Ownable: new owner is the zero address");
+    emit OwnershipTransferred(_owner, newOwner);
+    _owner = newOwner;
+  }
+
+  
+
+  /** ========== internal mutative function ========== */
+
+  /**  This function will be called every transfer()/transferfrom() happen. 
+       It's a hook from Superfluid through RedirectAll function   */
+  function _beforeTokenTransfer(
+    address from,
+    address to,
+    uint256 tokeniD
+  ) internal override {
+      _changeReceiver(to);
+  }
+
+  function _batchmint(address to,uint amount) internal {
+    require(amount != 0, "you must set a amount");
+    for(uint i=0; i<amount;i++){
+        _singlemint(to);
     }
+    emit batchmints(to, amount);
+  }
+
+  function _singlemint(address to) internal {
+    require(to != address(0), "to address is not allowed be zero");
+    _safeMint(to, currentTokenID);
+    currentTokenID++;
+  }
+
+  /** ===================== internal view function ===================== */
+
+  function getChainId() internal view returns (uint) {
+    uint256 chainId;
+    assembly { chainId := chainid() }
+    return chainId;
+  }
 
 
-    /** ===================== internal mutative function ===================== */
-
-    function _batchmint(address to,uint amount) internal {
-        require(amount != 0, "you must set a amount");
-        for(uint i=0; i<amount;i++){
-            _singlemint(to);
-        }
-        emit batchmints(to, amount);
-    }
-
-    function _singlemint(address to) internal {
-        require(to != address(0), "to address is not allowed be zero");
-        _safeMint(to, currentTokenID);
-        currentTokenID++;
-    }
-    
-    function _changeBaseURI(string memory baseURI_) internal {
-        require(bytes(baseURI_).length > 0);
-        baseURI = baseURI_;
-        emit changedbaseURI(_msgSender(), baseURI);
-    }
-    
-    function _changetokenURI(uint256 tokenId, string memory tokenURI) internal {
-        _setTokenURI(tokenId, tokenURI);
-        emit changedtokenURI(_msgSender(), tokenId, tokenURI);
-    }
+  /** ========== modifier ========== */
 
 
-    /** ===================== internal view function ===================== */
+  modifier isInternalContract {
+    require(_msgSender() == internalContract, "this function is only allowed to be called by internal contracts");
+    _;
+  }
 
-    function getChainId() internal view returns (uint) {
-        uint256 chainId;
-        assembly { chainId := chainid() }
-        return chainId;
-    }
+  modifier onlyOwner() {
+    require(owner() == _msgSender(), "Ownable: caller is not the owner");
+    _;
+  }
 
-    function _baseURI() internal view override returns (string memory) {
-        return baseURI;
-    }
+  
 
-    /** ===================== modifier ===================== */
+  /** ========== event ========== */
+  event approvalwithpermit(address indexed holder, address indexed spender, uint indexed tokenId);
+  event approvalwithallpermit(address indexed holder, address indexed spender);
+  event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
 
-    modifier onlytokenOwner(uint tokenId) {
-        require(ownerOf(tokenId) == _msgSender(), "Only the owner can modify the tokenURI");
-        _;
-    }
-    
-    /** ===================== event ===================== */ 
-    
-    
-    event batchmints(address indexed to, uint indexed amount);
-    event changedtokenURI(address indexed owner, uint indexed tokenId, string indexed tokenURI);
-    event changedbaseURI(address indexed, string indexed baseURI);
-    event approvalwithpermit(address indexed holder, address indexed spender, uint indexed tokenId);
-    event approvalwithallpermit(address indexed holder, address indexed spender);
-
-    
 }
