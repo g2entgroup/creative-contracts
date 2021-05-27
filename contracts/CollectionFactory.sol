@@ -2,7 +2,6 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./Interfaces/iCollectionFactory.sol";
 import "./Collection.sol";
 
 contract CollectionFactory is Ownable {
@@ -14,11 +13,14 @@ contract CollectionFactory is Ownable {
         string memory _name,
         string memory _symbol,
         string memory _baseuri,
-        address owner
+        address _owner
+        ISuperfluid host,
+        IConstantFlowAgreementV1 cfa,
+        ISuperToken acceptedToken
     ) external returns (address) {
-        require( owner != address(0), "you must set a address");
-        Collection collectionaddress = new Collection(_name,_symbol,_baseuri,owner);
-        collectionowner[address(collectionaddress)] = owner;
+        require( _owner != address(0), "you must set a address");
+        Collection collectionaddress = new Collection(_owner,_name,_symbol,_baseuri,host,cfa,acceptedToken);
+        collectionowner[address(collectionaddress)] = _owner;
         collections.push(address(collectionaddress));
         emit createNFTContract( _name, _symbol, address(collectionaddress));
         return address(collectionaddress);
