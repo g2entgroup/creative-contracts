@@ -6,6 +6,20 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import {Pool} from "./Pool.sol";
 
+interface iTwitterVerify{
+
+    function getVerification(address _user) external returns(bool); //TODO why does this need memory?
+    function getTwitterHandle(address _address) external returns(string memory);
+}
+
+interface linkToken{
+        function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
+}
+
+interface iRNG {
+    function addToWhitelist(address _address) external;
+}
+
 struct userVerification{
         bytes32 requestId;
         bool verified;
@@ -20,6 +34,8 @@ contract PoolFactory is Ownable{
     iRNG rng;
     linkToken link;
     address LINK_CONTRACT_ADDRESS;
+
+
     modifier okayToCreatePool(){
         require(allowPoolCreation, "Pool creation is currently not allowed!");
         _;
@@ -62,19 +78,6 @@ contract PoolFactory is Ownable{
         Pool pool = new Pool(_poolName, twitterVerify.getTwitterHandle(msg.sender), _capital, _capitalAddress, _nftAddress, msg.sender, address(rng), _campaignLength, _votingLength, _decisionLength, _submissionLength);
         poolList.push(address(pool));
         rng.addToWhitelist(address(pool));
+        
     }
-}
-
-interface iTwitterVerify{
-
-    function getVerification(address _user) external returns(bool); //TODO why does this need memory?
-    function getTwitterHandle(address _address) external returns(string memory);
-}
-
-interface linkToken{
-        function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
-}
-
-interface iRNG {
-    function addToWhitelist(address _address) external;
 }

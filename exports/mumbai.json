@@ -1,0 +1,302 @@
+{
+  "name": "mumbai",
+  "chainId": "80001",
+  "contracts": {
+    "PoolFactory": {
+      "address": "0xcbEF9474EE8804778694e3F30Ed4f58267953163",
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_twitterVerifyAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "linkTokenAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "rngAddress",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bool",
+              "name": "_bool",
+              "type": "bool"
+            }
+          ],
+          "name": "changePoolCreationBool",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "string",
+              "name": "_poolName",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "_capital",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "_capitalAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "_nftAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "_campaignLength",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "_votingLength",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "_decisionLength",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "_submissionLength",
+              "type": "uint256"
+            }
+          ],
+          "name": "createPool",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "_index",
+              "type": "uint256"
+            }
+          ],
+          "name": "getPoolAddress",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "owner",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "renounceOwnership",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_address",
+              "type": "address"
+            }
+          ],
+          "name": "setTwitterVerifyAddress",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "transferOwnership",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        }
+      ]
+    },
+    "RandomNumberConsumer": {
+      "address": "0xB9fdA88428d9F580237001BD19223E9fd53f9694",
+      "abi": [
+        {
+          "inputs": [],
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_address",
+              "type": "address"
+            }
+          ],
+          "name": "addToWhitelist",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "userProvidedSeed",
+              "type": "uint256"
+            }
+          ],
+          "name": "getRandomNumber",
+          "outputs": [
+            {
+              "internalType": "bytes32",
+              "name": "requestId",
+              "type": "bytes32"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "owner",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "randomResult",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bytes32",
+              "name": "requestId",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "uint256",
+              "name": "randomness",
+              "type": "uint256"
+            }
+          ],
+          "name": "rawFulfillRandomness",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "seeRandomNumber",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_address",
+              "type": "address"
+            }
+          ],
+          "name": "transferOwnership",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_address",
+              "type": "address"
+            }
+          ],
+          "name": "withdrawLink",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        }
+      ]
+    }
+  }
+}
