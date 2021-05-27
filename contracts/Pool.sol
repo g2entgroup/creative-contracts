@@ -58,6 +58,7 @@ contract Pool {
 
     /**
      * @dev emitted when a pool is created
+     * @param Pool the address of the pool
      * @param PoolOwner the address of the pool owner
      * @param PoolName the name of the pool set by the owner
      * @param BrandName the name of the brand, pulled from twitter verification
@@ -68,6 +69,7 @@ contract Pool {
      * @param CampaignFunds Amount of funds the campaign will be backed by with 18 decimals
      **/
     event PoolCreated(
+        address Pool,
         address PoolOwner,
         string PoolName,
         string BrandName,
@@ -257,6 +259,7 @@ contract Pool {
         brandVotingEndTime = fanVotingEndTime + _decisionLength;
         campaignEndTime = currentTime + _campaignLength;
         emit PoolCreated(
+            address(this),
             poolOwner,
             poolName,
             brandName,

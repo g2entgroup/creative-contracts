@@ -3,7 +3,7 @@ const LINK_TOKEN_ADDRESS = "0x326C977E6efc84E512bB9C30f76E30c160eD06FB";
 module.exports = async ({getNamedAccounts, deployments}) => {
     const {deploy} = deployments;
     const {deployer} = await getNamedAccounts();
-    const rngContract = await deploy('mockCRTV', {
+    const rngContract = await deploy('twitterverify', {
         from: deployer,
         args: [],
         log: true,

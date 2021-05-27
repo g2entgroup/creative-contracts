@@ -28,7 +28,7 @@ struct userVerification{
 
 contract PoolFactory is Ownable{
     bool allowPoolCreation;
-    address[] poolList;
+    address[] poolList;//TODO change this to a mapping!
     address TWITTER_VERIFY_ADDRESS;
     iTwitterVerify twitterVerify;
     iRNG rng;
