@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: MIT
-pragma solidity ^0.7.1;
+pragma solidity ^0.8.0;
 
 import {RedirectAll, ISuperToken, IConstantFlowAgreementV1, ISuperfluid} from "./RedirectAll.sol";
 import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
@@ -8,7 +8,7 @@ contract TradeableCashflow is ERC721, RedirectAll {
 
   address internal internalContract;
 
-  address private owner;
+  //address private owner;
   
   uint public currentTokenID;
 
@@ -130,7 +130,7 @@ contract TradeableCashflow is ERC721, RedirectAll {
     _setBaseURI(baseURI_);
   }
 
-  function setTokenURI(uint256 tokenId, string memory _tokenURI) onlyOwner {
+  function setTokenURI(uint256 tokenId, string memory _tokenURI) external onlyOwner {
     _setTokenURI(tokenId,_tokenURI);
   }
 

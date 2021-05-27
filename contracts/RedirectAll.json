@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.7.1;
+pragma solidity ^0.8.0;
 pragma abicoder v2;
 
 import {
@@ -50,11 +50,11 @@ contract RedirectAll is SuperAppBase {
         _host.registerApp(configWord);
     }
 
-    function RedirectAll_init initializer(
+    function RedirectAll_init(
         ISuperfluid host,
         IConstantFlowAgreementV1 cfa,
         ISuperToken acceptedToken,
-        address receiver) {
+        address receiver) public {//STEVE THIS DID HAVE initializer here but I removed it so that the contract would compile
         require(address(host) != address(0), "host is zero address");
         require(address(cfa) != address(0), "cfa is zero address");
         require(address(acceptedToken) != address(0), "acceptedToken is zero address");
@@ -73,7 +73,7 @@ contract RedirectAll is SuperAppBase {
             SuperAppDefinitions.BEFORE_AGREEMENT_TERMINATED_NOOP;
 
         _host.registerApp(configWord);
-    )
+        }
 
 
     /**************************************************************************

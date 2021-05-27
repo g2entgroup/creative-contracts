@@ -13,7 +13,7 @@ contract CollectionFactory is Ownable {
         string memory _name,
         string memory _symbol,
         string memory _baseuri,
-        address _owner
+        address _owner,
         ISuperfluid host,
         IConstantFlowAgreementV1 cfa,
         ISuperToken acceptedToken
