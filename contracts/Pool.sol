@@ -57,30 +57,6 @@ contract Pool {
     uint256 submissionCount = 1;
 
     /**
-     * @dev emitted when a pool is created
-     * @param Pool the address of the pool
-     * @param PoolOwner the address of the pool owner
-     * @param PoolName the name of the pool set by the owner
-     * @param BrandName the name of the brand, pulled from twitter verification
-     * @param SubmissionEndTime unix timestamp for when the submission period is over
-     * @param FanVotingEndTime unix timestamp for when the fan voting period is over
-     * @param BrandVotingEndTime unix timestamp for when the brand voting period is over
-     * @param CampaignEndtime unix timestamp for when the campaign is over
-     * @param CampaignFunds Amount of funds the campaign will be backed by with 18 decimals
-     **/
-    event PoolCreated(
-        address Pool,
-        address PoolOwner,
-        string PoolName,
-        string BrandName,
-        uint256 SubmissionEndTime,
-        uint256 FanVotingEndTime,
-        uint256 BrandVotingEndTime,
-        uint256 CampaignEndtime,
-        uint256 CampaignFunds
-    );
-
-    /**
      * @dev emitted when a pool is backed with enough campaign funds
      * @param PoolAddress address of the pool
      * @param PoolName name of the pool
@@ -258,17 +234,6 @@ contract Pool {
         fanVotingEndTime = submissionEndTime + _votingLength;
         brandVotingEndTime = fanVotingEndTime + _decisionLength;
         campaignEndTime = currentTime + _campaignLength;
-        emit PoolCreated(
-            address(this),
-            poolOwner,
-            poolName,
-            brandName,
-            submissionEndTime,
-            fanVotingEndTime,
-            brandVotingEndTime,
-            campaignEndTime,
-            funds
-        );
     }
 
     function getName() external view returns (string memory) {

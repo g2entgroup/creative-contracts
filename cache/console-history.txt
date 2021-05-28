@@ -1,4 +1,13 @@
 .exit
+await poolfactory.transferOwnership("0xa5E5860B34ac0C55884F2D0E9576d545e1c7Dfd4")
+await poolfactory.owner()
+const poolfactory = await PoolFactory.attach("0x591FD3027F77D18b7Bf40E00bD8148F679480b89")
+const PoolFactory = await ethers.getContractFactory("PoolFactory")
+.exit
+await rng.owner()
+const rng = await RNG.attach("0xB9fdA88428d9F580237001BD19223E9fd53f9694")
+const RNG = await ethers.getContractFactory("RandomNumberConsumer")
+.exit
 await pool1.seePoolBacking()
 await pool1.getName()
 const pool1 = await Pool1.attach("0x9e4fd2e36025f92804642874d27ff0a04074df39")

@@ -14,6 +14,8 @@ Then if you run npx hardhat accounts, and copy the first address, you can paste 
 
 run npx hardhat test
 
-[PoolFactory](https://explorer-mumbai.maticvigil.com/address/0xcbEF9474EE8804778694e3F30Ed4f58267953163/transactions)
+[PoolFactory](https://explorer-mumbai.maticvigil.com/address/0x591FD3027F77D18b7Bf40E00bD8148F679480b89/write-contract)
 
 [mock CRTV](https://explorer-mumbai.maticvigil.com/address/0xc59Cd7D4A979373253476dAe531333eE45aEF2f4/transactions)
+
+[twitterverify](https://explorer-mumbai.maticvigil.com/address/0x40dfefA04c7Ee8555F989B10e07196FBe4860915/write-contract)
