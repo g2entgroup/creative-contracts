@@ -4,10 +4,10 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-contract CRTVtoken is ERC20 {
+contract CRTVOtoken is ERC20 {
     
-    constructor() ERC20("Creative Token", "CRTV") { 
-        _mint(msg.sender, 980 * (10**25) );
+    constructor() ERC20("Creative Organization Token", "CRTVO") { 
+        _mint(msg.sender, 200 * (10**25) );
     }
 
     function burn(uint _amount) external returns(bool){
