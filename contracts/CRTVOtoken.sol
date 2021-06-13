@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 contract CRTVOtoken is ERC20 {
     
     constructor() ERC20("Creative Organization Token", "CRTVO") { 
-        _mint(msg.sender, 200 * (10**25) );
+        _mint(msg.sender, 200 * 10^7 );
     }
 
     function burn(uint _amount) external returns(bool){
