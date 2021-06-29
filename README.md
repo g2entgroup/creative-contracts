@@ -10,7 +10,7 @@ After cloning the repo, you will need create a secrets.json file in the project 
 In order to generate your mnemonic words run: npx mnemonics
 
 
-Then if you run npx hardhat accounts, and copy the first address, you can paste it into the mumbai testnet faucet to get some mumbai matic
+Then if you run npx hardhat accounts --network "network_name", and copy the first address, you can paste it into the mumbai testnet faucet to get some mumbai matic
 
 run npx hardhat test
 
