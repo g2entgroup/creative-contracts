@@ -18,8 +18,8 @@ const main = async () => {
 
 
   const buffalo = {
-    "description": "It's actually a bison?",
-    "external_url": "https://picsum.photos/200/300?random=1",// <-- this can link to a page for the specific file too
+    "description": "What do you think of my NFT?",
+    "external_url": "https://thecreative.eth/discover",// <-- this can link to a page for the specific file too
     "image": "https://picsum.photos/200/300?random=1",
     "name": "Buffalo",
     "attributes": [
@@ -45,16 +45,16 @@ const main = async () => {
 
   const zebra = {
     "description": "What is it so worried about?",
-    "external_url": "https://austingriffith.com/portfolio/paintings/",// <-- this can link to a page for the specific file too
-    "image": "https://austingriffith.com/images/paintings/zebra.jpg",
+    "external_url": "https://thecreative.eth/discover",// <-- this can link to a page for the specific file too
+    "image": "https://picsum.photos/200/300?random=2",
     "name": "Zebra",
     "attributes": [
        {
-         "trait_type": "BackgroundColor",
+         "trait_type": "VisualFX",
          "value": "blue"
        },
        {
-         "trait_type": "Eyes",
+         "trait_type": "Audio",
          "value": "googly"
        }
     ]
@@ -72,16 +72,16 @@ const main = async () => {
 
     const rhino = {
       "description": "What a horn!",
-      "external_url": "https://austingriffith.com/portfolio/paintings/",// <-- this can link to a page for the specific file too
-      "image": "https://austingriffith.com/images/paintings/rhino.jpg",
+      "external_url": "https://thecreative.eth/discover",// <-- this can link to a page for the specific file too
+      "image": "https://picsum.photos/200/300?random=3",
       "name": "Rhino",
       "attributes": [
          {
-           "trait_type": "BackgroundColor",
+           "trait_type": "VisualFX",
            "value": "pink"
          },
          {
-           "trait_type": "Eyes",
+           "trait_type": "Audio",
            "value": "googly"
          }
       ]
