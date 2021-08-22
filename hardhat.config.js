@@ -1,8 +1,13 @@
+/**
+* @type import('hardhat/config').HardhatUserConfig
+*/
+require('dotenv').config();
 require("@nomiclabs/hardhat-waffle");
 require('hardhat-deploy');
-const { mnemonic, maticVigilSecret } = require('./secrets.json');
+//const { mnemonic, maticVigilSecret } = require('./secrets.json');
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
+const { RINKEBY_API_URL, PRIVATE_KEY, MUMBAI_API_URL, MATIC_API_URL } = process.env;
 task("accounts", "Prints the list of accounts", async () => {
   const accounts = await ethers.getSigners();
 
@@ -40,21 +45,41 @@ module.exports = {
           }
         }
       }
-    ]
+    ],
+    overrides: {
+      "contracts/CreativeNFT.sol":
+        {
+          version: "0.6.5",
+          settings: { }
+        },
+      "contracts/CreativeNFT.sol": {
+        version: "0.8.4",
+        settings: { }
+      }
+    }
+  },
+  ovm: {
+    solcVersion: "0.7.6",
   },
   networks: {
     mumbai: {
-      url: `https://rpc-mumbai.maticvigil.com/v1/${maticVigilSecret}`,
-      accounts: {mnemonic: mnemonic}
+      url: MUMBAI_API_URL,
+      accounts: [`0x${PRIVATE_KEY}`]
     },
     polygon: {
-      url: `https://rpc-mainnet.maticvigil.com/v1/${maticVigilSecret}`,
-      accounts: {mnemonic: mnemonic}
+      url: MATIC_API_URL,
+      accounts: [`0x${PRIVATE_KEY}`]
     },
-    xDai: {
-      url: `https://rpc.xdaichain.com/`,
-      accounts: {mnemonic: mnemonic}
+    rinkeby: {
+      url: RINKEBY_API_URL,
+      accounts: [`0x${PRIVATE_KEY}`]
     }
+  },
+  paths: {
+    sources: "./contracts",
+    tests: "./test",
+    cache: "./cache",
+    artifacts: "./artifacts"
   },
   mocha: {
     timeout: 200000

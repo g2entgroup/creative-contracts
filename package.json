@@ -13,6 +13,7 @@
     "@chainlink/contracts": "^0.1.7",
     "@openzeppelin/contracts": "^4.1.0",
     "@poanet/solidity-flattener": "^3.0.6",
-    "@superfluid-finance/ethereum-contracts": "^1.0.0-rc.4"
+    "@superfluid-finance/ethereum-contracts": "^1.0.0-rc.4",
+    "dotenv": "^10.0.0"
   }
 }

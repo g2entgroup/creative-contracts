@@ -654,8 +654,8 @@
       ]
     },
     "E:\\projects\\Developer\\creative-contracts\\contracts\\CRTVOtoken.sol": {
-      "lastModificationDate": 1623610175246,
-      "contentHash": "f75dd4fec8eac14ec9b9edfb2abcfb2d",
+      "lastModificationDate": 1625148425005,
+      "contentHash": "eb8f69c47928de6924b53c4ffd2405be",
       "sourceName": "contracts/CRTVOtoken.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -961,7 +961,7 @@
       ]
     },
     "E:\\projects\\Developer\\creative-contracts\\contracts\\mockCRTVO.sol": {
-      "lastModificationDate": 1623608453653,
+      "lastModificationDate": 1624995049355,
       "contentHash": "e06b90fb5dfac2ebe9346aec8c8f3ab8",
       "sourceName": "contracts/mockCRTVO.sol",
       "solcConfig": {
@@ -1630,8 +1630,8 @@
       ]
     },
     "E:\\projects\\Developer\\creative-contracts\\contracts\\CRTVtoken.sol": {
-      "lastModificationDate": 1623610162161,
-      "contentHash": "d3423911d991781b1aecf8fa7ab81d44",
+      "lastModificationDate": 1625148425047,
+      "contentHash": "8f1506025208ae6ec8307a66b0891cb9",
       "sourceName": "contracts/CRTVtoken.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -1714,6 +1714,138 @@
       ],
       "artifacts": [
         "iCollection_Factory"
+      ]
+    },
+    "E:\\projects\\Developer\\creative-contracts\\contracts\\CreativeNFT.sol": {
+      "lastModificationDate": 1625064443035,
+      "contentHash": "b31438488061871624374d468f0593a6",
+      "sourceName": "contracts/CreativeNFT.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/utils/Counters.sol",
+        "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol",
+        "@openzeppelin/contracts/access/Ownable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "CreativeNFT"
+      ]
+    },
+    "E:\\projects\\Developer\\creative-contracts\\node_modules\\@openzeppelin\\contracts\\utils\\Counters.sol": {
+      "lastModificationDate": 1623611323166,
+      "contentHash": "86ddbfba30a7d811a86f54416c364be3",
+      "sourceName": "@openzeppelin/contracts/utils/Counters.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Counters"
+      ]
+    },
+    "E:\\projects\\Developer\\creative-contracts\\node_modules\\@openzeppelin\\contracts\\token\\ERC721\\extensions\\ERC721URIStorage.sol": {
+      "lastModificationDate": 1623611443952,
+      "contentHash": "2b16122c5f36625084a7f90f0780937b",
+      "sourceName": "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "../ERC721.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "ERC721URIStorage"
       ]
     }
   }

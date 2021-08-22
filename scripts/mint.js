@@ -1,11 +1,18 @@
 /* eslint no-use-before-define: "warn" */
 const fs = require("fs");
 const chalk = require("chalk");
-const { config, ethers } = require("hardhat");
+//const { config, ethers } = require("hardhat");
 const { utils } = require("ethers");
 const R = require("ramda");
 const ipfsAPI = require('ipfs-http-client');
 const ipfs = ipfsAPI({host: 'ipfs.infura.io', port: '5001', protocol: 'https' })
+
+const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
+const web3 = createAlchemyWeb3(API_URL);
+
+const contract = require("../artifacts/contracts/CreativeNFT.sol/CreativeNFT.json"); 
+const contractAddress = "0x19A5851e117Fb3Abd23718b03FA2E5554141170A";
+const nftContract = new web3.eth.Contract(contract.abi, contractAddress); 
 
 const main = async () => {
 
