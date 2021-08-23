@@ -24,7 +24,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
  * roles, as well as the default admin role, which will let it grant both minter
  * and pauser roles to other accounts.
  */
-contract ERC721PresetMinterPauserAutoId is
+contract CreativeNFT is
     Context,
     AccessControlEnumerable,
     ERC721Enumerable,

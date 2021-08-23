@@ -26,13 +26,13 @@ module.exports = async ({getNamedAccounts, deployments}) => {
 
     const PoolContract = await deploy('Pool', {
       from: deployer,
-      args: [],
+      args: ["test", "test", "100", "0xc59Cd7D4A979373253476dAe531333eE45aEF2f4", "0xc59Cd7D4A979373253476dAe531333eE45aEF2f4", "0xa5E5860B34ac0C55884F2D0E9576d545e1c7Dfd4", "0xc59Cd7D4A979373253476dAe531333eE45aEF2f4", "300", "100", "100", "100"],
       log: true,
     });
 
     const CreativeNFTContract = await deploy ('CreativeNFT', {
       from: deployer,
-      args: [],
+      args: ["CRTVNFT", "CRTV", "https://ipfs.io/ipfs/" ],
       log: true,
     });
   };
