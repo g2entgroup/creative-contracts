@@ -1,35 +1,14 @@
-const { utils } = require("ethers");
-const fs = require("fs");
-const chalk = require("chalk");
-require("@nomiclabs/hardhat-waffle");
-require('hardhat-deploy');
-const { INFURA_ID } = require("../src/constants");
-const { mnemonic, maticVigilSecret } = require('./secrets.json');
-
-/*
-      📡 This is where you configure your deploy configuration for CREATIVE
-      check out `scripts/deploy.js` to customize your deployment
-      out of the box it will auto deploy anything in the `contracts` folder and named *.sol
-      plus it will use *.args for constructor args
+/**
+* @type import('hardhat/config').HardhatUserConfig
 */
-
-//
-// Select the network you want to deploy to here:
-//
-const defaultNetwork = "ropsten";
-
-function mnemonic() {
-  try {
-    return fs.readFileSync("./mnemonic.txt").toString().trim();
-  } catch (e) {
-    if (defaultNetwork !== "localhost") {
-      console.log("☢️ WARNING: No mnemonic file created for a deploy account. Try `yarn run generate` and then `yarn run account`.")
-    }
-  }
-  return "";
-}
+const { utils } = require("ethers");
+require('dotenv').config();
+require("@nomiclabs/hardhat-ethers");
+require('hardhat-deploy');
+//const { mnemonic, maticVigilSecret } = require('./secrets.json');
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
+const { RINKEBY_API_KEY, PRIVATE_KEY, MUMBAI_API_KEY, MATIC_API_KEY, ETHERSCAN_API_KEY } = process.env;
 task("accounts", "Prints the list of accounts", async () => {
   const accounts = await ethers.getSigners();
 
@@ -75,59 +54,32 @@ module.exports = {
       }
     ]
   },
+  defaultNetwork: "rinkeby",
   networks: {
-    localhost: {
-      url: "http://localhost:8545",
-      accounts: {
-        mnemonic: mnemonic(),
-      },
-      /*
-        notice no mnemonic here? it will just use account 0 of the hardhat node to deploy
-        (you can put in a mnemonic here to set the deployer locally)
-      */
+    hardhat: {},
+    mumbai: {
+      url: `https://polygon-mumbai.g.alchemy.com/v2/${MUMBAI_API_KEY}`,
+      accounts: [`0x${PRIVATE_KEY}`]
+    },
+    matic: {
+      url: `https://polygon-mainnet.g.alchemy.com/v2/${MATIC_API_KEY}`,
+      accounts: [`0x${PRIVATE_KEY}`]
     },
     rinkeby: {
-      url: `https://rinkeby.infura.io/v3/${INFURA_ID}`, //<---- YOUR INFURA ID! (or it won't work)
-      accounts: {
-        mnemonic: mnemonic(),
-      },
-    },
-    kovan: {
-      url: `https://kovan.infura.io/v3/${INFURA_ID}`, //<---- YOUR INFURA ID! (or it won't work)
-      accounts: {
-        mnemonic: mnemonic(),
-      },
-    },
-    mainnet: {
-      url: `https://mainnet.infura.io/v3/${INFURA_ID}`, //<---- YOUR INFURA ID! (or it won't work)
-      accounts: {
-        mnemonic: mnemonic(),
-      },
-    },
-    ropsten: {
-      url: `https://ropsten.infura.io/v3/${INFURA_ID}`, //<---- YOUR INFURA ID! (or it won't work)
-      accounts: {
-        mnemonic: mnemonic(),
-      },
-    },
-    goerli: {
-      url: `https://goerli.infura.io/v3/${INFURA_ID}`, //<---- YOUR INFURA ID! (or it won't work)
-      accounts: {
-        mnemonic: mnemonic(),
-      },
-    },
-    mumbai: {
-      url: `https://rpc-mumbai.maticvigil.com/v1/${maticVigilSecret}`,
-      accounts: {mnemonic: mnemonic()}
-    },
-    polygon: {
-      url: `https://rpc-mainnet.maticvigil.com/v1/${maticVigilSecret}`,
-      accounts: {mnemonic: mnemonic()}
-    },
-    xDai: {
-      url: `https://rpc.xdaichain.com/`,
-      accounts: {mnemonic: mnemonic()}
+      url: `https://eth-rinkeby.alchemyapi.io/v2/${RINKEBY_API_KEY}`,
+      accounts: [`0x${PRIVATE_KEY}`]
     }
+  },
+  etherscan: {
+    // Your API key for Etherscan
+    // Obtain one at https://etherscan.io/
+    apiKey: ETHERSCAN_API_KEY,
+  },
+  paths: {
+    sources: "./contracts",
+    tests: "./test",
+    cache: "./cache",
+    artifacts: "./artifacts"
   },
   mocha: {
     timeout: 200000
@@ -135,9 +87,10 @@ module.exports = {
   namedAccounts: {
     deployer: {
         default: 0, // here this will by default take the first account as deployer
-        1: 0, // similarly on mainnet it will take the first account as deployer. Note though that depending on how hardhat network are configured, the account 0 on one network can be different than on another
-        4: '0xA296a3d5F026953e17F472B497eC29a5631FB51B', // but for rinkeby it will be a specific address
-        "goerli": '0x84b9514E013710b9dD0811c9Fe46b837a4A0d8E0', //it can also specify a specific netwotk name (specified in hardhat.config.js)
+        80001: 0, // similarly on mainnet it will take the first account as deployer. Note though that depending on how hardhat network are configured, the account 0 on one network can be different than on another
+        4: '0x1Fde40a4046Eda0cA0539Dd6c77ABF8933B94260', // but for rinkeby it will be a specific address
+        137: 0,
+        "goerli": '0x1Fde40a4046Eda0cA0539Dd6c77ABF8933B94260', //it can also specify a specific network name (specified in hardhat.config.js)
     }
   }
-};
+}
