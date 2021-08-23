@@ -17,6 +17,12 @@ task("accounts", "Prints the list of accounts", async () => {
   }
 });
 module.exports = {
+  defaultNetwork,
+
+  // don't forget to set your provider like:
+  // REACT_APP_PROVIDER=https://dai.poa.network in packages/react-app/.env
+  // (then your frontend will talk to your contracts on the live network!)
+  // (you will need to restart the `yarn run start` dev server after editing the .env)
   solidity: {
     compilers: [
       {
