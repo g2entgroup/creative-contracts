@@ -17,8 +17,22 @@ task("accounts", "Prints the list of accounts", async () => {
   }
 });
 module.exports = {
-  defaultNetwork,
-
+  defaultNetwork: "rinkeby",
+  networks: {
+    hardhat: {},
+    mumbai: {
+      url: `https://polygon-mumbai.g.alchemy.com/v2/${MUMBAI_API_KEY}`,
+      accounts: [`0x${PRIVATE_KEY}`]
+    },
+    matic: {
+      url: `https://polygon-mainnet.g.alchemy.com/v2/${MATIC_API_KEY}`,
+      accounts: [`0x${PRIVATE_KEY}`]
+    },
+    rinkeby: {
+      url: `https://eth-rinkeby.alchemyapi.io/v2/${RINKEBY_API_KEY}`,
+      accounts: [`0x${PRIVATE_KEY}`]
+    }
+  },
   // don't forget to set your provider like:
   // REACT_APP_PROVIDER=https://dai.poa.network in packages/react-app/.env
   // (then your frontend will talk to your contracts on the live network!)
@@ -53,22 +67,6 @@ module.exports = {
         }
       }
     ]
-  },
-  defaultNetwork: "rinkeby",
-  networks: {
-    hardhat: {},
-    mumbai: {
-      url: `https://polygon-mumbai.g.alchemy.com/v2/${MUMBAI_API_KEY}`,
-      accounts: [`0x${PRIVATE_KEY}`]
-    },
-    matic: {
-      url: `https://polygon-mainnet.g.alchemy.com/v2/${MATIC_API_KEY}`,
-      accounts: [`0x${PRIVATE_KEY}`]
-    },
-    rinkeby: {
-      url: `https://eth-rinkeby.alchemyapi.io/v2/${RINKEBY_API_KEY}`,
-      accounts: [`0x${PRIVATE_KEY}`]
-    }
   },
   etherscan: {
     // Your API key for Etherscan
