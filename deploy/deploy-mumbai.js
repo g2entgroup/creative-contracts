@@ -35,5 +35,11 @@ module.exports = async ({getNamedAccounts, deployments}) => {
       args: ["CRTVNFT", "CRTV", "https://ipfs.io/ipfs/"],
       log: true,
     })
+
+    const CreativeNFTContractv2 = await deploy ('CreativeNFTv2', {
+      from: deployer,
+      args: [],
+      log: true,
+    });
   };
-  module.exports.tags = ['CreativeNFT'];
+  module.exports.tags = ['CreativeNFTv2'];
