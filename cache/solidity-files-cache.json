@@ -654,8 +654,8 @@
       ]
     },
     "E:\\projects\\Developer\\creative-contracts\\contracts\\CreativeNFT.sol": {
-      "lastModificationDate": 1629661281981,
-      "contentHash": "6ff14db7b373f050b987115d8efbf2d5",
+      "lastModificationDate": 1629729567688,
+      "contentHash": "9f421d275ebc5bf271db1dbf297fd29e",
       "sourceName": "contracts/CreativeNFT.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -2250,6 +2250,52 @@
       ],
       "artifacts": [
         "iCollection_Factory"
+      ]
+    },
+    "E:\\projects\\Developer\\creative-contracts\\contracts\\CreativeNFTv2.sol": {
+      "lastModificationDate": 1630290012009,
+      "contentHash": "b76b90929d5b8efa13d6b476b67a1c91",
+      "sourceName": "contracts/CreativeNFTv2.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "devdoc",
+                "userdoc",
+                "storageLayout",
+                "evm.gasEstimates"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "metadata": {
+            "useLiteralContent": true
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC721/ERC721.sol",
+        "@openzeppelin/contracts/utils/Counters.sol",
+        "@openzeppelin/contracts/access/Ownable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "CreativeNFTv2"
       ]
     }
   }

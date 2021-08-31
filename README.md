@@ -2,15 +2,10 @@
 
 After cloning the repo, you will need create a secrets.json file in the project directory with the following deets:
 
-{
-    "mnemonic": "some words you get from running npx mnemonics",
-    "maticVigilSecret": "Super Secret Key"
-}
-
-In order to generate your mnemonic words run: ```npx mnemonics```
+create .env file (see ```.sample.env```)
 
 
-Then if you run ```npx hardhat accounts --network network_name```, and copy the first address, you can paste it into the mumbai testnet faucet to get some mumbai matic
+Then if you run ```npx hardhat accounts --network network_name```, and copy the first address, you can paste it into the mumbai or rinkeby testnet faucet to get some matic or eth.
 
 run ```npx hardhat test```
 
