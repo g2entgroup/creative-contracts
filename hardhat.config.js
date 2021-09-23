@@ -3,7 +3,9 @@
 */
 const { utils } = require("ethers");
 require('dotenv').config();
-require("@nomiclabs/hardhat-ethers");
+require('@nomiclabs/hardhat-ethers');
+require("@nomiclabs/hardhat-waffle");
+require("@typechain/hardhat");
 require('hardhat-deploy');
 //const { mnemonic, maticVigilSecret } = require('./secrets.json');
 // This is a sample Hardhat task. To learn how to create your own go to
@@ -17,7 +19,7 @@ task("accounts", "Prints the list of accounts", async () => {
   }
 });
 module.exports = {
-  defaultNetwork: "rinkeby",
+  defaultNetwork: "mumbai",
   networks: {
     hardhat: {},
     mumbai: {
