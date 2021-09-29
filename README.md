@@ -1,13 +1,18 @@
 # creative-contracts
 
-After cloning the repo, you will need create a secrets.json file in the project directory with the following deets:
-
-create .env file (see ```.sample.env```)
+## 🏄‍♂️ Quick Start
 
 
-Then if you run ```npx hardhat accounts --network network_name```, and copy the first address, you can paste it into the mumbai or rinkeby testnet faucet to get some matic or eth.
+Step 1: Clone creative-contracts with **"git clone https://github.com/g2entgroup/creative-contracts"**
 
-run ```npx hardhat test```
+Step 2: Create a **secrets.json** file in the project directory with the following deets:
+
+        ***.env*** file * *(you can find a example in see ```.sample.env```)* *
+
+
+Step 3: Run ```npx hardhat accounts --network network_name```, and copy the first address, you can paste it into the mumbai or rinkeby testnet faucet to get some matic or eth.
+
+Step 4: Run ```npx hardhat test```
 
 [PoolFactory](https://explorer-mumbai.maticvigil.com/address/0x591FD3027F77D18b7Bf40E00bD8148F679480b89/write-contract)
 
