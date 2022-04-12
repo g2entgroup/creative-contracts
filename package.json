@@ -13,6 +13,7 @@
   "dependencies": {
     "@chainlink/contracts": "^0.1.7",
     "@openzeppelin/contracts": "^4.3.0",
+    "@openzeppelin/contracts-upgradeable": "^4.5.2",
     "@poanet/solidity-flattener": "^3.0.6",
     "@superfluid-finance/ethereum-contracts": "^1.0.0-rc.4",
     "@typechain/ethers-v5": "^7.1.0",

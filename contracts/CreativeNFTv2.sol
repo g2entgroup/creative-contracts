@@ -1,20 +1,20 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
 
-contract CreativeNFTv2 is ERC721, Ownable {
-  using Counters for Counters.Counter;
-  using Strings for uint256;
-  Counters.Counter _tokenIds;
+contract CreativeNFTv2 is ERC721Upgradeable, OwnableUpgradeable {
+  using CountersUpgradeable for CountersUpgradeable.Counter;
+  CountersUpgradeable.Counter _tokenIds;
   mapping(uint256 => string) _tokenURIs;
 
   struct RenderToken {
     uint256 id;
     string uri;
   }
+
 
   function _setTokenURI(uint256 tokenId, string memory _tokenURI) internal {
     _tokenURIs[tokenId] = _tokenURI;
@@ -54,7 +54,7 @@ contract CreativeNFTv2 is ERC721, Ownable {
     return newId;
   }
 
-  /**
+  /*
     @gawainb function to burn NFT
     @param tokenId NFT id
     * See {ERC721}.
