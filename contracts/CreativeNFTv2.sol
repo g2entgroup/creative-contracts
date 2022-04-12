@@ -16,8 +16,6 @@ contract CreativeNFTv2 is ERC721, Ownable {
     string uri;
   }
 
-  constructor() ERC721("Smart Contract", "SC") {}
-
   function _setTokenURI(uint256 tokenId, string memory _tokenURI) internal {
     _tokenURIs[tokenId] = _tokenURI;
   }
@@ -50,9 +48,24 @@ contract CreativeNFTv2 is ERC721, Ownable {
 
   function mint(address recipient, string memory uri) public returns (uint256) {
     uint256 newId = _tokenIds.current();
-    _mint(recipient, newId);
+    _safeMint(recipient, newId);
     _setTokenURI(newId, uri);
     _tokenIds.increment();
     return newId;
   }
+
+  /**
+    @gawainb function to burn NFT
+    @param tokenId NFT id
+    * See {ERC721}.
+    *
+    * Requirements:
+    *
+    * - the caller must be owner of the token.
+    */
+    function burn(uint256 tokenId) public virtual returns (bool) {
+        require(ownerOf(tokenId) == _msgSender(), "caller is not the owner");
+        _burn(tokenId);
+        return true;
+    }
 }
