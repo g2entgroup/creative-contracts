@@ -12,3 +12,6 @@
 
 #### Contract: Storage
 ##### Address: 0xcf27DA560534a1769c94f2aD7eddF7dA1d361220
+
+### Contract: RandomNumberGenerator
+#### Address: 0xb0cEC520Cb041681b6108E6BD94DC85a543f10b1
