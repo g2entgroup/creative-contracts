@@ -1,17 +1,48 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.6.0;
+pragma solidity ^0.8.0;
 
-import "@chainlink/contracts/src/v0.6/VRFConsumerBase.sol";
+import "@chainlink/contracts/src/v0.8/interfaces/LinkTokenInterface.sol";
+import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
+import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 
-contract RandomNumberConsumer is VRFConsumerBase {
+contract RandomNumberConsumer is VRFConsumerBaseV2 {
+    VRFCoordinatorV2Interface COORDINATOR;
+    LinkTokenInterface LINKTOKEN;
+
+    // Rinkeby coordinator. For other networks,
+    // see https://docs.chain.link/docs/vrf-contracts/#configurations
+    address vrfCoordinator = 0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed;
+
+    // Your subscription ID.
+    uint64 s_subscriptionId;
+    // The gas lane to use, which specifies the maximum gas price to bump to.
+    // For a list of available gas lanes on each network,
+    // see https://docs.chain.link/docs/vrf-contracts/#configurations
+    bytes32 keyHash = 0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f;
+
+    // MUMBAI LINK token contract. For other networks, see
+    // https://docs.chain.link/docs/vrf-contracts/#configurations
+    address link_token_contract = 0x326C977E6efc84E512bB9C30f76E30c160eD06FB;
+    // Depends on the number of requested values that you want sent to the
+    // fulfillRandomWords() function. Storing each word costs about 20,000 gas,
+    // so 100,000 is a safe default for this example contract. Test and adjust
+    // this limit based on the network that you select, the size of the request,
+    // and the processing of the callback request in the fulfillRandomWords()
+    // function.
+    uint32 callbackGasLimit = 100000;
+
+    // The default is 3, but you can set this higher.
+    uint16 requestConfirmations = 3;
+
+    // For this example, retrieve 2 random values in one request.
+    // Cannot exceed VRFCoordinatorV2.MAX_NUM_WORDS.
+    uint32 numWords =  2;
     
-    bytes32 internal keyHash;
-    uint256 internal fee;
-    
-    uint256 public randomResult;
+    uint256[] public s_randomWords;
     address[] whitelist;
     uint whitelistCount;
-    address public owner;
+    uint256 public s_requestId;
+    address public s_owner;
     
     modifier isWhitelist() {
         bool pass = false;
@@ -26,7 +57,7 @@ contract RandomNumberConsumer is VRFConsumerBase {
     }
     
     modifier onlyOwner() {
-        require(msg.sender == owner, "Only the owner can call this function!");
+        require(msg.sender == s_owner, "Only the owner can call this function!");
         _;
     }
     
@@ -34,19 +65,17 @@ contract RandomNumberConsumer is VRFConsumerBase {
      * Constructor inherits VRFConsumerBase
      * 
      * Network: Mumbai
-     * Chainlink VRF Coordinator address: 0x8C7382F9D8f56b33781fE506E897a4F1e2d17255
+     * Chainlink VRF Coordinator address: 0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed
      * LINK token address:                0x326C977E6efc84E512bB9C30f76E30c160eD06FB
-     * Key Hash: 0x6e75b569a01ef56d18cab6a8e71e6600d6ce853834d4a5748b720d06f878b3a4
+     * Key Hash: 0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f
      */
-    constructor() 
-        VRFConsumerBase(
-            0x8C7382F9D8f56b33781fE506E897a4F1e2d17255, // VRF Coordinator
-            0x326C977E6efc84E512bB9C30f76E30c160eD06FB  // LINK Token
-        ) public
+    constructor(uint64 subscriptionId) 
+        VRFConsumerBaseV2(vrfCoordinator)
     {
-        keyHash = 0x6e75b569a01ef56d18cab6a8e71e6600d6ce853834d4a5748b720d06f878b3a4;
-        fee = 0.1 * 10 ** 18; // 0.1 LINK
-        owner = msg.sender;
+        COORDINATOR = VRFCoordinatorV2Interface(vrfCoordinator);
+        LINKTOKEN = LinkTokenInterface(link_token_contract);
+        s_owner = msg.sender;
+        s_subscriptionId = subscriptionId;
     }
     
     /** 
@@ -60,20 +89,24 @@ contract RandomNumberConsumer is VRFConsumerBase {
      *         ---- https://docs.chain.link/docs/fund-your-contract -----               *
      *                                                                                  *
      ************************************************************************************/
-    function getRandomNumber(uint256 userProvidedSeed) public isWhitelist returns (bytes32 requestId) {
-        require(LINK.balanceOf(address(this)) >= fee, "Not enough LINK - fill contract with faucet");
-        return requestRandomness(keyHash, fee, userProvidedSeed);
-    }
 
+    // Assumes the subscription is funded sufficiently.
+    function requestRandomWords() external onlyOwner {
+        // Will revert if subscription is not set and funded.
+        s_requestId = COORDINATOR.requestRandomWords(
+        keyHash,
+        s_subscriptionId,
+        requestConfirmations,
+        callbackGasLimit,
+        numWords
+        );
+    }
+    
     /**
      * Callback function used by VRF Coordinator
      */
-    function fulfillRandomness(bytes32 requestId, uint256 randomness) internal override {
-        randomResult = randomness;
-    }
-    
-    function seeRandomNumber() external returns(uint) {
-        return randomResult;
+    function fulfillRandomWords(uint256, uint256[] memory randomWords) internal override {
+        s_randomWords = randomWords;
     }
     
     /**
@@ -81,7 +114,7 @@ contract RandomNumberConsumer is VRFConsumerBase {
      * 
      */
     function withdrawLink(address _address) external onlyOwner {
-        require(LINK.transfer(_address, LINK.balanceOf(address(this))), "Unable to transfer");
+        require(LINKTOKEN.transfer(_address, LINKTOKEN.balanceOf(address(this))), "Unable to transfer");
     }
     
     function addToWhitelist(address _address) external onlyOwner{
@@ -90,7 +123,7 @@ contract RandomNumberConsumer is VRFConsumerBase {
     }
     
     function transferOwnership(address _address) external  onlyOwner {
-        owner = _address;
+        s_owner = _address;
     }
     
 }
