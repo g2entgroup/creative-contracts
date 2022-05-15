@@ -9,7 +9,7 @@ contract RandomNumberConsumer is VRFConsumerBaseV2 {
     VRFCoordinatorV2Interface COORDINATOR;
     LinkTokenInterface LINKTOKEN;
 
-    // Rinkeby coordinator. For other networks,
+    // Mumbai coordinator. For other networks,
     // see https://docs.chain.link/docs/vrf-contracts/#configurations
     address vrfCoordinator = 0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed;
 
